@@ -3,20 +3,21 @@
 # Base image: Ubuntu 22.04 LTS
 FROM ubuntu:22.04
 
-WORKDIR /
+ARG HOME=/root
+WORKDIR ${HOME}
 
 # Install packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y tshark
 RUN apt-get update && apt-get install -y wget git graphviz python3-pip
 
 # Create non-root user
-ARG USER=user
-ARG UID=1000
-ARG HOME=/home/${USER}
-RUN groupadd --gid ${UID} ${USER} && \
-    useradd --uid ${UID} --gid ${UID} -m ${USER}
-USER ${USER}
-WORKDIR ${HOME}
+#ARG USER=user
+#ARG UID=1000
+#ARG HOME=/home/${USER}
+#RUN groupadd --gid ${UID} ${USER} && \
+#    useradd --uid ${UID} --gid ${UID} -m ${USER}
+#USER ${USER}
+#WORKDIR ${HOME}
 
 # Install Python packages
 RUN pip3 install \
@@ -55,6 +56,5 @@ RUN ant synoptic
 # Set working directory to home
 WORKDIR ${HOME}
 
-# Run event inference scripts
-
+# Run scripts
 #CMD ./run_all.sh

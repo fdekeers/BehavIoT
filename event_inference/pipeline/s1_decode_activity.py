@@ -1,9 +1,6 @@
 import sys
 import os
-# Useful paths
-script_path = Path(os.path.abspath(__file__))  # This script's path
-script_dir = script_path.parents[0]            # This script's directory
-event_inference_dir = script_path.parents[1]   # This script's parent directory
+from pathlib import Path
 import utils
 from utils import is_local, validate_ip_address
 from multiprocessing import Process

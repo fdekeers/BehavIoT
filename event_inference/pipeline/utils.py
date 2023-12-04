@@ -1,6 +1,14 @@
-import numpy as np
+import os
+from pathlib import Path
 from subprocess import Popen, PIPE
 import ipaddress
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+event_inference_dir = script_path.parents[1]   # This script's parent directory
+base_dir = script_path.parents[2]              # The repository's base directory
+
 
 def validate_ip_address(address):
     """ check if it's a valid ip address
@@ -67,7 +75,7 @@ def protocol_transform(test_protocols):
 
 
 def read_mac_address():
-    mac_file = '../devices.txt'
+    mac_file = os.path.join(base_dir, "devices.txt")
     mac_dic = {}
     with open(mac_file, 'r') as f:
         lines = f.readlines()
