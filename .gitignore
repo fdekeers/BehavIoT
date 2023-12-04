@@ -5,3 +5,5 @@ data/
 **/*.tgz
 # Pycache
 **/__pycache__
+# Logs
+**/*.log
