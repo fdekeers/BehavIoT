@@ -10,6 +10,19 @@ year={2023}
 }
 ```
 
+## Docker container
+
+Build with:
+```bash
+docker build -t behaviot .
+```
+
+Run with:
+```bash
+docker run --rm --mount type=bind,source=$(pwd),target=/home/user/BehavIoT -it behaviot /bin/bash
+```
+
+
 ## [Event inference](event_inference/README.md)
 Modeling device behavior: inferring periodic and user events
 

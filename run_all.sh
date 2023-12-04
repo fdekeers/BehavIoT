@@ -8,7 +8,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ) 
 
 
 ### Event inference
-EVENT_INFERENCE_DIR=$SCRIPT_DIR/BehavIoT/event_inference
+EVENT_INFERENCE_DIR=$SCRIPT_DIR/event_inference
 PIPELINE_DIR=$EVENT_INFERENCE_DIR/pipeline
 INPUTS_DIR=$EVENT_INFERENCE_DIR/inputs/2021
 DATA_DIR=$EVENT_INFERENCE_DIR/data
