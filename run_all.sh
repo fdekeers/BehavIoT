@@ -69,3 +69,10 @@ python3 $PIPELINE_DIR/s6_binary_predict_whostname.py -i $DATA_DIR/routines-filte
 ## 7. Periodic model score
 python3 $PIPELINE_DIR/periodic_deviation_score.py -i $DATA_DIR/idle-half-train-std/ -o $MODEL_DIR/time_score_newT_train_idle
 python3 $PIPELINE_DIR/periodic_score_analysis.py $MODEL_DIR/time_score_newT_train_idle $MODEL_DIR/time_score_newT_test_idle
+
+
+### PFSM
+# TODO
+
+### Behavioral analysis
+# TODO
