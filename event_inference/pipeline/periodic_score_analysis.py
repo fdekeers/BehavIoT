@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sys
 from datetime import datetime
 import utils
@@ -12,6 +13,13 @@ import matplotlib.ticker as mticker
 from collections import Counter
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))                # This script's path
+script_dir = script_path.parents[0]                          # This script's directory
+event_inference_dir = script_path.parents[1]                 # This script's parent directory
+cdf_dir = os.path.join(event_inference_dir, "cdf")
+
 
 def plotting_cdf(score_list, name):
 
@@ -36,9 +44,9 @@ def plotting_cdf(score_list, name):
     # plt.xscale("log")
     # plt.title('%s'%name)
     plt.tight_layout()
-    dic = './cdf/score_%s.png' % name
+    dic = os.path.join(cdf_dir, f"score_{name}.png")
     plt.savefig(dic)
-    dic = './cdf/score_%s.pdf' % name
+    dic = os.path.join(cdf_dir, "cdf", f"score_{name}.pdf")
     plt.savefig(dic)
 
 
@@ -119,18 +127,17 @@ def plotting_cdf_list(score_list_list, name, file_list):
     plt.ylabel('', fontsize=15)
 
     
-    cdf_dir = './cdf'
     if not os.path.isdir(cdf_dir):
         os.mkdir(cdf_dir)
-    dic = '%s/score_%s_double.pdf' % (cdf_dir, name)
+    dic = os.path.join(cdf_dir, f"score_{name}_double.pdf")
     plt.savefig(dic)
-    dic = '%s/score_%s_double.png' % (cdf_dir, name)
+    dic = os.path.join(cdf_dir, f"score_{name}_double.png")
     plt.savefig(dic) # , bbox_inches="tight"
     return 0
 
 
 
-base_dir = './model'
+base_dir = os.path.join(event_inference_dir, "model")
 
 if len(sys.argv) < 2: #  and len(sys.argv) != 4
     print('Not enough argv')
@@ -142,8 +149,8 @@ file_list = [in_dir, in_dir2]
 mac_dic = utils.read_mac_address()
 deviation_score_list_list = []
 for in_dir in file_list:
-    root_log = '%s/time_logs' % in_dir
-    output_dir = '%s/alarms' % in_dir
+    root_log = os.path.join(in_dir, "time_logs")
+    output_dir = os.path.join(in_dir, "alarms")
 
     if not os.path.exists(output_dir):
         os.system('mkdir -pv %s' % output_dir)
@@ -162,7 +169,8 @@ for in_dir in file_list:
         periodic_tuple = []
         tmp_host_set = set()
         try:
-            with open('./period_detection/freq_period/fingerprints/%s.txt' % dname, 'r') as file:
+            fingerprint_file = os.path.join(event_inference_dir, "period_extraction", "freq_period", "fingerprints", f"{dname}.txt")
+            with open(fingerprint_file, 'r') as file:
                 for line in file:
                     tmp = line.split()
                     # print(tmp)

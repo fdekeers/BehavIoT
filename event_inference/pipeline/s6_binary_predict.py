@@ -1,5 +1,6 @@
 import warnings
 import os
+from pathlib import Path
 import sys
 import argparse
 import pickle
@@ -13,8 +14,15 @@ import Constants as c
 warnings.simplefilter("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", category=FutureWarning)
 
-num_pools = 1
+# Useful paths
+script_path = Path(os.path.abspath(__file__))                # This script's path
+script_dir = script_path.parents[0]                          # This script's directory
+event_inference_dir = script_path.parents[1]                 # This script's parent directory
+data_dir = os.path.join(event_inference_dir, "data")         # Data directory
+base_model_dir = os.path.join(event_inference_dir, "model")  # Model directory
+logs_dir = os.path.join(event_inference_dir, "logs")         # Logs directory
 
+num_pools = 1
         
 default_models = ['rf']
 model_list = ['rf']
@@ -94,7 +102,7 @@ def main():
     if not os.path.exists(root_output):
         os.system('mkdir -pv %s' % root_output)
         for model_alg in model_list:
-            model_dir = '%s/%s' % (root_model, model_alg)
+            model_dir = os.path.join(root_model, model_alg)
             if not os.path.exists(model_dir):
                 os.mkdir(model_dir)
 
@@ -118,7 +126,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            input_data_file = '%s/%s' % (root_feature, csv_file)
+            input_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
             lparas.append((input_data_file, dname, random_state))
     p = Pool(num_pools)
@@ -161,9 +169,9 @@ def eval_individual_device(input_data_file, dname, random_state):
         """
         Prepare the directories and add only models that have not been trained yet 
         """
-        model_dir = '%s/%s' % (root_model, model_alg)
-        # model_file = '%s/%s%s.model' % (model_dir, dname, model_alg)
-        label_file = '%s/%s.label.txt' % (model_dir, dname)
+        model_dir = os.path.join(root_model, model_alg)
+        # model_file = os.path.join(model_dir, f"{dname}{model_alg}.model")
+        label_file = os.path.join(model_dir, f"{dname}.label.txt")
 
         list_models_todo.append(model_alg)
 
@@ -333,19 +341,22 @@ def eval_individual_device(input_data_file, dname, random_state):
     print('-----------------------logs-------------------------')
 
 
-    if not os.path.exists('%s/unctrl' % (root_model)):
-        os.mkdir('%s/unctrl' % (root_model))
-    with open('%s/unctrl/%s.txt' % (root_model, dname), 'w+') as off:
+    unctrl_dir = os.path.join(root_model, "unctrl")
+    if not os.path.exists(unctrl_dir):
+        os.mkdir(unctrl_dir)
+    unctrl_file = os.path.join(unctrl_dir, f"{dname}.txt")
+    with open(unctrl_file, 'w+') as off:
         for i in range(len(test_timestamp)):
             off.write("%s :%s\n" % (datetime.fromtimestamp(test_timestamp[i]
                 ).strftime("%m/%d/%Y, %H:%M:%S"), output_label_list[i]))
 
     
-    output_log_file = 'logs/log_%s' % root_feature.split('/')[-2]
+    output_log_dir = os.path.join(logs_dir, f"log_{root_feature.split('/')[-2]}")
 
-    if not os.path.exists(output_log_file):
-        os.mkdir(output_log_file)
-    with open('%s/unctrl-%s.txt' % (output_log_file, dname), 'w+') as off:
+    if not os.path.exists(output_log_dir):
+        os.mkdir(output_log_dir)
+    output_log_file = os.path.join(output_log_dir, f"unctrl-{dname}.txt")
+    with open(output_log_file, 'w+') as off:
         cur_time_window_id = 0
         for i in range(len(output_label_list)):
             if time_window_id_list[i] != cur_time_window_id:

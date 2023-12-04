@@ -144,7 +144,7 @@ def eval_individual_device(data_file, dname):
 
 
     train_std_dir = '%s%s' % (root_model[:-1], '-std' )
-    std_train_file = '%s/%s.csv' % (train_std_dir, dname)
+    std_train_file = os.path.join(train_std_dir, f"{dname}.csv")
     # train_pca_dir = '%s%s' % (root_model[:-1], '-pca' )
     # pca_train_file = '%s/%s.csv' % (train_pca_dir, dname)
 

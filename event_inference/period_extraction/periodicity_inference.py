@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np 
 import os
+from pathlib import Path
 import collections
 import matplotlib
 from statsmodels import api as sm
@@ -11,11 +12,14 @@ matplotlib.use('Agg')
 matplotlib.rcParams['agg.path.chunksize'] = 500
 import matplotlib.pyplot as plt
 
-
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+parent_dir = script_path.parents[1]            # This script's parent directory
 
 
 # input files
-root_feature = '../data/idle-2021-features/'
+root_feature = os.path.join(parent_dir, "data", "idle-2021-features")
 device_names = []
 lparas = []
 for csv_file in os.listdir(root_feature):

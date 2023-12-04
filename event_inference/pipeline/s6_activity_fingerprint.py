@@ -100,7 +100,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            train_data_file = '%s/%s' % (root_feature, csv_file)
+            train_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
             lparas.append((train_data_file, dname, random_state))
     p = Pool(num_pools)
@@ -219,7 +219,7 @@ def fingerprint_individual_device(train_data_file, dname, random_state):
                 else:
                     res_dict[l][tuple_pair] = [1,len(cur_label_num)]
 
-    output_file = "%s/%s.txt" %(root_output, dname)
+    output_file = os.path.join(root_output, f"{dname}.txt")
 
     if res_dict == 0 or res_dict is None or len(res_dict) == 0: return 0
 

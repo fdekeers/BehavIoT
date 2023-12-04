@@ -1,6 +1,7 @@
 import warnings
 import utils
 import os
+from pathlib import Path
 import sys
 import argparse
 import pickle
@@ -15,6 +16,11 @@ import Constants as c
 
 warnings.simplefilter("ignore", category=DeprecationWarning)
 
+# Useful paths
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+data_dir = os.path.join(event_inference_dir, "data")  # Data directory
 
 num_pools = 1
 
@@ -126,7 +132,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            train_data_file = '%s/%s' % (root_feature, csv_file)
+            train_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
 
             lparas.append((train_data_file, dname, random_state))
@@ -167,8 +173,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     Prepare the directories and add only models that have not been trained yet 
     """
     model_alg = 'filter'
-    model_dir = '%s/%s' % (root_model, model_alg)
-    model_file = '%s/%s%s.model' % (model_dir, dname, model_alg)
+    model_dir = os.path.join(root_model, model_alg)
+    model_file = os.path.join(model_dir, f"{dname}{model_alg}")
 
     """
     Training file reading 
@@ -189,8 +195,9 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     """
     periodic_tuple = []
     tmp_host_set = set()
+    fingerprint_path = os.path.join(event_inference_dir, "period_extraction", "freq_period", "fingerprints", f"{dname}.txt")
     try:
-        with open('./period_detection/freq_period/2021_fingerprints/%s.txt' % dname, 'r') as file:
+        with open(fingerprint_path, 'r') as file:
             for line in file:
                 tmp = line.split()
 
@@ -246,7 +253,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     """
     print('loading test data')
 
-    test_data = pd.read_csv("data/idle-2021-test-std/%s.csv" % dname)
+    csv_test_file = os.path.join(data_dir, "idle-2021-test-std", f"{dname}.csv")
+    test_data = pd.read_csv(csv_test_file)
     test_feature = test_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     test_data_numpy = np.array(test_data)
     test_feature = np.array(test_feature)
@@ -471,11 +479,11 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         f.write('\nFlows left: %2f %d %d' % (len(test_feature)/len_test_before,len(test_feature), len_test_before))
         f.write('\nActivity left: %2f %d %d \n\n' % (len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event))
 
-    test_feature = pd.DataFrame(test_data_numpy, columns=cols_feat) # use this only when processing std data 
-    idle_filter_dir = 'data/idle-2021-test-filtered-std'
+    test_feature = pd.DataFrame(test_data_numpy, columns=cols_feat) # use this only when processing std data
+    idle_filter_dir = os.path.join(data_dir, "idle-2021-test-filtered-std")
     if not os.path.exists(idle_filter_dir):
         os.mkdir(idle_filter_dir)
-    filtered_train_processed= '%s/%s.csv' % (idle_filter_dir, dname)
+    filtered_train_processed = os.path.join(idle_filter_dir, f"{dname}.csv")
     test_feature.to_csv(filtered_train_processed, index=False)
     return 0
 

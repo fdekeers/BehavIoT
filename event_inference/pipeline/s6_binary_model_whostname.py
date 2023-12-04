@@ -1,6 +1,7 @@
 import warnings
 import utils
 import os
+from pathlib import Path
 import sys
 import argparse
 import pickle
@@ -19,8 +20,14 @@ warnings.simplefilter("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", category=FutureWarning)
 warnings.simplefilter("ignore", category=UserWarning)
 
-num_pools = 1
+# Useful paths
+script_path = Path(os.path.abspath(__file__))                # This script's path
+script_dir = script_path.parents[0]                          # This script's directory
+event_inference_dir = script_path.parents[1]                 # This script's parent directory
+data_dir = os.path.join(event_inference_dir, "data")         # Data directory
+base_model_dir = os.path.join(event_inference_dir, "model")  # Model directory
 
+num_pools = 1
 
 default_models = ['rf']
 model_list = ['rf']
@@ -99,7 +106,7 @@ def main():
     if not os.path.exists(root_output):
         os.system('mkdir -pv %s' % root_output)
         for model_alg in model_list:
-            model_dir = '%s/%s' % (root_model, model_alg)
+            model_dir = os.path.join(root_model, model_alg)
             if not os.path.exists(model_dir):
                 os.mkdir(model_dir)
 
@@ -122,7 +129,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            train_data_file = '%s/%s' % (root_feature, csv_file)
+            train_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
             lparas.append((train_data_file, dname, random_state))
     p = Pool(num_pools)
@@ -165,9 +172,9 @@ def eval_individual_device(train_data_file, dname, random_state):
         """
         Prepare the directories and add only models that have not been trained yet 
         """
-        model_dir = '%s/%s' % (root_model, model_alg)
-        # model_file = '%s/%s%s.model' % (model_dir, dname, model_alg)
-        label_file = '%s/%s.label.txt' % (model_dir, dname)
+        model_dir = os.path.join(root_model, model_alg)
+        # model_file = os.path.join(model_dir, f"{dname}{model_alg}.model")
+        label_file = os.path.join(model_dir, f"{dname}.label.txt")
 
         list_models_todo.append(model_alg)
 
@@ -192,7 +199,8 @@ def eval_individual_device(train_data_file, dname, random_state):
     '''
     read idle data for training (as negatives)
     '''
-    train_bg = pd.read_csv("data/idle-2021-train-std/%s.csv" % dname)
+    idle_train_std_csv_file = os.path.join(data_dir, "idle-2021-train-std", f"{dname}.csv")
+    train_bg = pd.read_csv(idle_train_std_csv_file)
     bg_feature = train_bg.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     bg_feature = np.array(bg_feature)
     bg_labels = np.zeros(len(bg_feature))
@@ -224,7 +232,8 @@ def eval_individual_device(train_data_file, dname, random_state):
     """
     read testing set
     """
-    test_data = pd.read_csv(os.path.join('data/test-filtered-std/', '%s.csv' %dname))
+    test_filtered_std_csv_file = os.path.join(data_dir, "test-filtered-std", f"{dname}.csv")
+    test_data = pd.read_csv(test_filtered_std_csv_file)
 
     X_test = test_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     y_test = np.array(test_data.state)
@@ -232,7 +241,8 @@ def eval_individual_device(train_data_file, dname, random_state):
     test_protocol = np.array(test_data.protocol)
     test_events = np.array(test_data.event)
     
-    idle_FP_data = pd.read_csv(os.path.join('data/idle-2021-test-filtered-std/', '%s.csv' %dname))
+    idle_test_filtered_std_csv_file = os.path.join(data_dir, "idle-2021-test-filtered-std", f"{dname}.csv")
+    idle_FP_data = pd.read_csv(idle_test_filtered_std_csv_file)
     idle_FP_test = idle_FP_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     idle_FP_ts = np.array(idle_FP_data.start_time)
     idle_FP_protocol = np.array(idle_FP_data.protocol)
@@ -256,7 +266,7 @@ def eval_individual_device(train_data_file, dname, random_state):
 
 
     # read fingerprints domains
-    fingerprint_file = 'model/fingerprint/%s.txt' % dname
+    fingerprint_file = os.path.join(base_model_dir, "fingerprint", f"{dname}.txt")
     activity_fingerprint_dic = {}
     activity_fingerprint_merge_count = {}
     tmp_activity_list = []
@@ -409,10 +419,12 @@ def eval_individual_device(train_data_file, dname, random_state):
             """
                 
             print(model_dir)
-            if not os.path.exists(model_dir + '/' + dname ):
-                os.mkdir(model_dir + '/' + dname )
-            model_file = os.path.join(model_dir + '/' + dname + '/' +
-                model_alg + '_' + positive_label + '_' + cur_host_protocol_tup + ".model")
+
+            new_model_dir = os.path.join(model_dir, dname)
+            if not os.path.exists(new_model_dir):
+                os.mkdir(new_model_dir)
+            model_file = os.path.join(model_dir, dname,
+                f"{model_alg}_{positive_label}_{cur_host_protocol_tup}.model")
             trained_model = RandomForestClassifier(n_estimators=100, random_state=100)
             trained_model.fit(cur_X_train_tmp, cur_y_train_bin)
             pickle.dump(trained_model, open(model_file, 'wb'))
@@ -583,7 +595,7 @@ def eval_individual_device(train_data_file, dname, random_state):
 
     """
     Idle evaluation:
-    comment out if unnescessary
+    comment out if unnecessary
     """
     with open(output_file,'a+') as of:
         if len(idle_FP_test)!=0:
@@ -596,9 +608,11 @@ def eval_individual_device(train_data_file, dname, random_state):
     '''
     print('# event_dict length',len(event_dict.keys()))
     print('------------------------------------------------')
-    if not os.path.exists('%s/logs/' %  root_model):
-        os.mkdir('%s/logs/' %  root_model)
-    with open('%s/logs/%s-test.txt' % (root_model, dname), 'w+') as off:
+    logs_dir = os.path.join(root_model, "logs")
+    if not os.path.exists(logs_dir):
+        os.mkdir(logs_dir)
+    test_file = os.path.join(logs_dir, f"{dname}-test.txt")
+    with open(test_file, 'w+') as off:
         for k, v in event_dict.items():
             off.write("%s %s :%s\n" % (k,v[-1],v[0]))
 

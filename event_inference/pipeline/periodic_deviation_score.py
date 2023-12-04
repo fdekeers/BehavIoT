@@ -1,6 +1,10 @@
 import warnings
 import utils
 import os
+# Useful paths
+script_path = Path(os.path.abspath(__file__))                # This script's path
+script_dir = script_path.parents[0]                          # This script's directory
+event_inference_dir = script_path.parents[1]                 # This script's parent directory
 import sys
 import argparse
 import numpy as np
@@ -11,6 +15,10 @@ import Constants as c
 
 warnings.simplefilter("ignore", category=DeprecationWarning)
 
+# Useful paths
+script_path = Path(os.path.abspath(__file__))                # This script's path
+script_dir = script_path.parents[0]                          # This script's directory
+event_inference_dir = script_path.parents[1]                 # This script's parent directory
 
 num_pools = 1
 
@@ -112,7 +120,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            train_data_file = '%s/%s' % (root_feature, csv_file)
+            train_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
             lparas.append((train_data_file, dname, random_state))
     num_pools = 12
@@ -151,7 +159,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     periodic_tuple = []
     tmp_host_set = set()
     try:
-        with open('./period_detection/freq_period/fingerprints/%s.txt' % dname, 'r') as file:
+        fingerprint_file = os.path.join(event_inference_dir, "period_extraction", "freq_period", "fingerprints", f"{dname}.txt")
+        with open(fingerprint_file, 'r') as file:
             for line in file:
                 tmp = line.split()
                 # print(tmp)

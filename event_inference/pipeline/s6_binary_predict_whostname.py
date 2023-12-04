@@ -1,5 +1,6 @@
 import warnings
 import os
+from pathlib import Path
 import sys
 import utils
 import argparse
@@ -14,8 +15,15 @@ import Constants as c
 warnings.simplefilter("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", category=FutureWarning)
 
-num_pools = 1
+# Useful paths
+script_path = Path(os.path.abspath(__file__))                # This script's path
+script_dir = script_path.parents[0]                          # This script's directory
+event_inference_dir = script_path.parents[1]                 # This script's parent directory
+data_dir = os.path.join(event_inference_dir, "data")         # Data directory
+base_model_dir = os.path.join(event_inference_dir, "model")  # Model directory
+logs_dir = os.path.join(event_inference_dir, "logs")         # Logs directory
 
+num_pools = 1
 
 default_models = ['rf']
 model_list = ['rf']
@@ -96,7 +104,7 @@ def main():
     if not os.path.exists(root_output):
         os.system('mkdir -pv %s' % root_output)
         for model_alg in model_list:
-            model_dir = '%s/%s' % (root_model, model_alg)
+            model_dir = os.path.join(root_model, model_alg)
             if not os.path.exists(model_dir):
                 os.mkdir(model_dir)
 
@@ -120,7 +128,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            input_data_file = '%s/%s' % (root_feature, csv_file)
+            input_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
             lparas.append((input_data_file, dname, random_state))
     p = Pool(num_pools)
@@ -165,9 +173,9 @@ def eval_individual_device(input_data_file, dname, random_state):
         """
         Prepare the directories and add only models that have not been trained yet 
         """
-        model_dir = '%s/%s' % (root_model, model_alg)
-        # model_file = '%s/%s%s.model' % (model_dir, dname, model_alg)
-        label_file = '%s/%s.label.txt' % (model_dir, dname)
+        model_dir = os.path.join(root_model, model_alg)
+        # model_file = os.path.join(model_dir, f"{dname}{model_alg}.model")
+        label_file = os.path.join(model_dir, f"{dname}.label.txt")
 
         list_models_todo.append(model_alg)
 
@@ -198,7 +206,7 @@ def eval_individual_device(input_data_file, dname, random_state):
         return
 
     # read fingerprints domains
-    fingerprint_file = 'model/fingerprint/%s.txt' % dname
+    fingerprint_file = os.path.join(base_model_dir, "fingerprint", f"{dname}.txt")
     if not os.path.exists(fingerprint_file):
         return
     activity_fingerprint_dic = {}
@@ -455,11 +463,11 @@ def eval_individual_device(input_data_file, dname, random_state):
     test_feature['protocol'] = test_data_numpy_new[:,-2]
     test_feature['hosts'] = test_data_numpy_new[:,-1]
 
-    output_dir = '%s-unknown/' % root_feature[:-1]
+    output_dir = '%s-unknown' % root_feature[:-1]
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
-    filtered_train_processed= '%s/%s.csv' % (output_dir , dname)
-    # filtered_train_processed= 'data/test-filtered-std/%s.csv' % ( dname)
+    filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
+    # filtered_train_processed = os.path.join(data_dir, "test-filtered-std", f"{dname}.csv")
     print('Unknown csv:', filtered_train_processed)
     test_feature.to_csv(filtered_train_processed, index=False)
     '''
@@ -469,18 +477,21 @@ def eval_individual_device(input_data_file, dname, random_state):
     print('-----------------------logs-------------------------')
 
     dataset = root_feature.split('/')[1].split('-')[0]
-    if not os.path.exists('%s/%s' % (root_model, dataset)):
-        os.mkdir('%s/%s' % (root_model, dataset))
-    with open('%s/%s/%s.txt' % (root_model, dataset, dname), 'w+') as off:
+    dataset_path = os.path.join(root_model, dataset)
+    if not os.path.exists(dataset_path):
+        os.mkdir(dataset_path)
+    dataset_file = os.path.join(root_model, dataset, f"{dname}.txt")
+    with open(dataset_file, 'w+') as off:
         for i in range(len(test_timestamp)):
             off.write("%s :%s, %s\n" % (datetime.fromtimestamp(test_timestamp[i]
                 ).strftime("%m/%d/%Y, %H:%M:%S"), output_label_list[i], test_host_protocol[i]))
 
-    output_log_file = 'logs/log_unknown_%s' % root_feature.split('/')[-2]
+    output_log_file = os.path.join(logs_dir, f"log_unknown_{root_feature.split('/')[-2]}")
 
     if not os.path.exists(output_log_file):
         os.mkdir(output_log_file)
-    with open('%s/test-%s.txt' % (output_log_file, dname), 'w+') as off:
+    test_file = os.path.join(output_log_file, f"test-{dname}.txt")
+    with open(test_file, 'w+') as off:
         cur_time_window_id = 0
         for i in range(len(output_label_list)):
             if time_window_id_list[i] != cur_time_window_id:

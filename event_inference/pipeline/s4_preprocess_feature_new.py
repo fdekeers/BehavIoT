@@ -1,5 +1,6 @@
 import warnings
 import os
+from pathlib import Path
 import sys
 import argparse
 import pickle
@@ -13,10 +14,15 @@ import Constants as c
 warnings.simplefilter("ignore", category=DeprecationWarning)
 warnings.simplefilter("ignore", UserWarning)
 
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+data_dir = os.path.join(event_inference_dir, 'data')  # Output data directory
+
 num_pools = 12
 cols_feat = utils.get_features()
-            
-
 
 model_list = []
 root_output = ''
@@ -158,7 +164,7 @@ def eval_individual_device(idle_data_file, dname):
 
     # idle_file = './data/idle-2021-features/%s.csv' % dname
 
-    routines_file = './data/trace-features/%s.csv' % dname
+    routines_file = os.path.join(data_dir, "trace-features", f"{dname}.csv")
     if not os.path.isfile(routines_file):
         with_routines = False
     else:
@@ -174,10 +180,10 @@ def eval_individual_device(idle_data_file, dname):
 
     
     # idle dirctories
-    train_idle_std_dir = './data/idle-2021-train-std'
-    train_idle_pca_dir = './data/idle-2021-train-pca'
-    test_idle_std_dir = './data/idle-2021-test-std'
-    test_idle_pca_dir = './data/idle-2021-test-pca'
+    train_idle_std_dir = os.path.join(data_dir, "idle-2021-train-std")
+    train_idle_pca_dir = os.path.join(data_dir, "idle-2021-train-pca")
+    test_idle_std_dir = os.path.join(data_dir, "idle-2021-test-std")
+    test_idle_pca_dir = os.path.join(data_dir, "idle-2021-test-pca")
     if not os.path.exists(train_idle_std_dir):
         os.mkdir(train_idle_std_dir)
     # if not os.path.exists(train_idle_pca_dir):
@@ -188,14 +194,14 @@ def eval_individual_device(idle_data_file, dname):
     #     os.mkdir(test_idle_pca_dir)
 
     # idle std&pca files
-    train_idle_std_file = '%s/%s.csv' % ( train_idle_std_dir, dname) 
-    train_idle_pca_file = '%s/%s.csv' % ( train_idle_pca_dir, dname) 
-    test_idle_std_file = '%s/%s.csv' % ( test_idle_std_dir, dname) 
-    test_idle_pca_file = '%s/%s.csv' % ( test_idle_pca_dir, dname) 
+    train_idle_std_file = os.path.join(train_idle_std_dir, f"{dname}.csv") 
+    train_idle_pca_file = os.path.join(train_idle_pca_dir, f"{dname}.csv")
+    test_idle_std_file = os.path.join(test_idle_std_dir, f"{dname}.csv")
+    test_idle_pca_file = os.path.join(test_idle_pca_dir, f"{dname}.csv")
 
     if with_routines:
-        routines_std_dir = './data/routines-std'
-        routines_pca_dir = './data/routines-pca'
+        routines_std_dir = os.path.join(data_dir, "routines-std")
+        routines_pca_dir = os.path.join(data_dir, "routines-pca")
         routines_std_file = '%s/%s.csv' % ( routines_std_dir, dname) 
         routines_pca_file = '%s/%s.csv' % ( routines_pca_dir, dname) 
         if not os.path.exists(routines_std_dir):

@@ -1,8 +1,15 @@
 import sys
 import os
+from pathlib import Path
 import numpy as np
 import Constants as c
 import pickle
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+event_inference_dir = script_path.parents[1]   # This script's parent directory
+
 
 def print_usage(is_error):
     PATH = sys.argv[0]
@@ -57,6 +64,7 @@ def hostname_extract(infiles, dev_name):
     return ip_host
 
 def main():
+    print(os.getcwd())
     [ print_usage(0) for arg in sys.argv if arg in ("-h", "--help") ]
 
     print("Running %s..." % sys.argv[0])
@@ -113,16 +121,19 @@ def main():
         ip_hosts_all[dev] = hostname_extract(dns_files[dev],dev)
 
     
-    # output dir 
-    out_dir = './ip_host'
+    # output dir
+    out_dir = os.path.join(event_inference_dir, "ip_host")
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    
     if in_txt.endswith('routine_dns.txt'):
-        model_file = '%s/routines.model' %  out_dir
+        model_file = os.path.join(out_dir, "routines.model")
     elif in_txt.endswith('activity_dns.txt'):
-        model_file = '%s/activity_nov.model' %  out_dir
+        model_file = os.path.join(out_dir, "activity.model")
     elif in_txt.endswith('idle_dns.txt'):
-        model_file = '%s/ip_host_idle_nov16.model' %  out_dir
+        model_file = os.path.join(out_dir, "ip_host_idle.model")
     elif in_txt.endswith('uncontrolled_dns.txt'):
-        model_file = '%s/uncontrolled_21-22.model' %  out_dir
+        model_file = os.path.join(out_dir, "uncontrolled_21-22.model")
     else:
         print('Please manually specify output model file')
         exit(1)
