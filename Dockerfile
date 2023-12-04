@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y wget git graphviz python3-pip
 # Install Python packages
 RUN pip3 install \
     matplotlib \
+    scikit-learn \
     statsmodels \
     networkx \
     pydot \
