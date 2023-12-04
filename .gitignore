@@ -1,9 +1,15 @@
 # Datasets
 data/
+
 # TAR archives
 **/*.tar.gz
 **/*.tgz
+
 # Pycache
 **/__pycache__
+
+# Output files
+event_inference/ip_host/
+
 # Logs
 **/*.log

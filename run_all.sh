@@ -25,13 +25,13 @@ python3 $PIPELINE_DIR/s1_decode_activity.py $INPUTS_DIR/test.txt $DATA_DIR/test-
 
 ## 2. Feature extraction
 # 2.1. On decoded traffic
-python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/idle-2021-decoded/ $DATA_DIR/idle-2021-features/ > $LOGS_DIR/2-feature-extraction/1-features-idle.log
-python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/train-decoded/ $DATA_DIR/train-features/ > $LOGS_DIR/2-feature-extraction/2-features-train.log
-python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/test-decoded/ $DATA_DIR/test-features/ > $LOGS_DIR/2-feature-extraction/3-features-test.log
+python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/idle-2021-decoded/ $DATA_DIR/idle-2021-features/ > $LOGS_DIR/2-feature-generation/1-features-idle.log
+python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/train-decoded/ $DATA_DIR/train-features/ > $LOGS_DIR/2-feature-generation/2-features-train.log
+python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/test-decoded/ $DATA_DIR/test-features/ > $LOGS_DIR/2-feature-generation/3-features-test.log
 # 2.2. On routine dataset
-python3 $PIPELINE_DIR/s1_decode_dns_tls.py $INPUT_DIR/routine_dns.txt > $LOGS_DIR/2-feature-extraction/4-routine-decode-dns.log
-python3 $PIPELINE_DIR/s1_decode_activity.py $INPUT_DIR/routine-dataset.txt $DATA_DIR/routine-decoded/ > $LOGS_DIR/2-feature-extraction/5-routine-decode-activity.log
-python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/routine-decoded/ $DATA_DIR/routine-features/ > $LOGS_DIR/2-feature-extraction/6-features-routine.log
+python3 $PIPELINE_DIR/s1_decode_dns_tls.py $INPUT_DIR/routine_dns.txt > $LOGS_DIR/2-feature-generation/4-routine-decode-dns.log
+python3 $PIPELINE_DIR/s1_decode_activity.py $INPUT_DIR/routine-dataset.txt $DATA_DIR/routine-decoded/ > $LOGS_DIR/2-feature-generation/5-routine-decode-activity.log
+python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/routine-decoded/ $DATA_DIR/routine-features/ > $LOGS_DIR/2-feature-generation/6-features-routine.log
 # 2.3. On uncontrolled dataset
 # Impossible, since this dataset cannot be shared
 
