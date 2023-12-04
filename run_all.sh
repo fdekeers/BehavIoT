@@ -41,34 +41,34 @@ python3 $PERIOD_EXTRACTION_DIR/periodicity_inference.py > $LOGS_DIR/3-period-ext
 python3 $PERIOD_EXTRACTION_DIR/fingerprint_generation.py > $LOGS_DIR/3-period-extraction/2-fingerprint-generation.log
 
 ## 4. Preprocessing
-python3 $PIPELINE_DIR/s4_preprocess_feature_new.py -i $DATA_DIR/idle-2021-features/ -o $DATA_DIR/idle/
-python3 $PIPELINE_DIR/s4_preprocess_feature_applyonly.py -i $DATA_DIR/uncontrolled-features/ -o $DATA_DIR/uncontrolled/
+python3 $PIPELINE_DIR/s4_preprocess_feature_new.py -i $DATA_DIR/idle-2021-features/ -o $DATA_DIR/idle/ > $LOGS_DIR/4-preprocessing/1-preprocess-idle.log
+python3 $PIPELINE_DIR/s4_preprocess_feature_applyonly.py -i $DATA_DIR/uncontrolled-features/ -o $DATA_DIR/uncontrolled/ > $LOGS_DIR/4-preprocessing/2-preprocess-uncontrolled.log
 
 ## 5. Periodic event inference and filtering
 MODEL_DIR=$EVENT_INFERENCE_DIR/model
 # 5.1. Train
-python3 $PIPELINE_DIR/s5_periodic_filter.py -i $DATA_DIR/idle-2021-train-std/ -o $MODEL_DIR/filter_apr20
+python3 $PIPELINE_DIR/s5_periodic_filter.py -i $DATA_DIR/idle-2021-train-std/ -o $MODEL_DIR/filter_apr20 > $LOGS_DIR/5-periodic-event-inference/1-train-idle.log
 # 5.2. Activity dataset
-python3 $PIPELINE_DIR/s5_filter_by_periodic.py -i train -o $MODEL_DIR/filter
-python3 $PIPELINE_DIR/s5_filter_by_periodic.py -i test -o $MODEL_DIR/filter
+python3 $PIPELINE_DIR/s5_filter_by_periodic.py -i train -o $MODEL_DIR/filter > $LOGS_DIR/5-periodic-event-inference/2-filter-train.log
+python3 $PIPELINE_DIR/s5_filter_by_periodic.py -i test -o $MODEL_DIR/filter > $LOGS_DIR/5-periodic-event-inference/3-filter-test.log
 # 5.3. Routine dataset: timing + model filter
-python3 $PIPELINE_DIR/s5_periodic_time_filter.py -i $DATA_DIR/routines-std/ -o $MODEL_DIR/time_filter
-python3 $PIPELINE_DIR/s5_filter_by_periodic_after_time.py -i routines -o $MODEL_DIR/filter
+python3 $PIPELINE_DIR/s5_periodic_time_filter.py -i $DATA_DIR/routines-std/ -o $MODEL_DIR/time_filter > $LOGS_DIR/5-periodic-event-inference/4-periodic-filter-routines.log
+python3 $PIPELINE_DIR/s5_filter_by_periodic_after_time.py -i routines -o $MODEL_DIR/filter > $LOGS_DIR/5-periodic-event-inference/5-filter-routines.log
 # 5.4. Uncontrolled dataset: timing + model filter
 # Impossible, since this dataset cannot be shared
 
 ## 6. User event inference
 # With hostname
-python3 $PIPELINE_DIR/s6_activity_fingerprint.py -i $DATA_DIR/train-filtered-std/ -o $MODEL_DIR/fingerprint/
-python3 $PIPELINE_DIR/s6_binary_model_whostname.py -i $DATA_DIR/train-filtered-std/ -o $MODEL_DIR/binary
-python3 $PIPELINE_DIR/s6_binary_predict_whostname.py -i $DATA_DIR/routines-filtered-std/ -o $MODEL_DIR/binary
+python3 $PIPELINE_DIR/s6_activity_fingerprint.py -i $DATA_DIR/train-filtered-std/ -o $MODEL_DIR/fingerprint/ > $LOGS_DIR/6-user-event-inference/1-train-fingerprint.log
+python3 $PIPELINE_DIR/s6_binary_model_whostname.py -i $DATA_DIR/train-filtered-std/ -o $MODEL_DIR/binary > $LOGS_DIR/6-user-event-inference/2-train-binary-whostname.log
+python3 $PIPELINE_DIR/s6_binary_predict_whostname.py -i $DATA_DIR/routines-filtered-std/ -o $MODEL_DIR/binary > $LOGS_DIR/6-user-event-inference/3-predict-routines-binary-whostname.log
 # Without hostname
-#python3 $PIPELINE_DIR/s6_binary_model.py -i $DATA_DIR/train-filtered-std/ -o $MODEL_DIR/binary
-#python3 $PIPELINE_DIR/s6_binary_predict.py -i $DATA_DIR/routines-filtered-std/ -o $MODEL_DIR/binary
+#python3 $PIPELINE_DIR/s6_binary_model.py -i $DATA_DIR/train-filtered-std/ -o $MODEL_DIR/binary > $LOGS_DIR/6-user-event-inference/2-train-binary.log
+#python3 $PIPELINE_DIR/s6_binary_predict.py -i $DATA_DIR/routines-filtered-std/ -o $MODEL_DIR/binary > $LOGS_DIR/6-user-event-inference/3-predict-routines-binary.log
 
 ## 7. Periodic model score
-python3 $PIPELINE_DIR/periodic_deviation_score.py -i $DATA_DIR/idle-half-train-std/ -o $MODEL_DIR/time_score_newT_train_idle
-python3 $PIPELINE_DIR/periodic_score_analysis.py $MODEL_DIR/time_score_newT_train_idle $MODEL_DIR/time_score_newT_test_idle
+python3 $PIPELINE_DIR/periodic_deviation_score.py -i $DATA_DIR/idle-half-train-std/ -o $MODEL_DIR/time_score_newT_train_idle > $LOGS_DIR/7-score/1-deviation-score.log
+python3 $PIPELINE_DIR/periodic_score_analysis.py $MODEL_DIR/time_score_newT_train_idle $MODEL_DIR/time_score_newT_test_idle > $LOGS_DIR/7-score/2-score-analysis.log
 
 
 ### PFSM
