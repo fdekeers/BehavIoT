@@ -18,9 +18,10 @@ Process idle dataset.
 """
 
 # Useful paths
-script_path = Path(os.path.abspath(__file__))  # This script's path
-script_dir = script_path.parents[0]            # This script's directory
-event_inference_dir = script_path.parents[1]   # This script's parent directory
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+logs_dir = os.path.join(event_inference_dir, "logs")  # Logs directory
 
 
 #is_error is either 0 or 1
@@ -217,10 +218,10 @@ def extract_pcap(in_pcap, out_txt, dev_name, ip_host):
         for ts, flow_burst in v.items():
             if len(flow_burst) < 2:
                 continue
-            # flow_dir = out_txt[:-4]+"/"
-            flow_file = out_txt[:-4]+"_flow{}_burst{}.txt".format(k[3],ts)
-            # if not os.path.isdir(flow_dir):
-                # os.system("mkdir -pv %s" % flow_dir)
+
+            flow_dir = out_txt[:-4]
+            os.makedirs(flow_dir, exist_ok=True)
+            flow_file = os.path.join(flow_dir, f"flow{k[3]}_burst{ts}.txt")
             with open(flow_file, "w") as f:
                 f.write(header)
                 for row in flow_burst:
@@ -417,8 +418,7 @@ def run(files, out_dir, ip_hosts):
         dev_name = os.path.basename(os.path.dirname(dir_name))
         dir_target = os.path.join(out_dir, dev_name, activity)
         count_dic[dev_name] = {'prior':0,'after':0,'whois':0,'blank':0,'local':0} 
-        if not os.path.isdir(dir_target):
-            os.system("mkdir -pv %s" % dir_target)
+        os.makedirs(dir_target, exist_ok=True)
 
         out_txt = os.path.join(dir_target, os.path.basename(f)[:-4] + "txt")
         #nothing happens if output file exists
@@ -440,15 +440,16 @@ def run(files, out_dir, ip_hosts):
                 count_dic[dev_name]['whois'] += count_tmp['whois']
                 count_dic[dev_name]['blank'] += count_tmp['blank']
                 count_dic[dev_name]['local'] += count_tmp['local']
-    if not os.path.isdir('./logs/decode_logs'):
-        os.system("mkdir -pv %s" % './logs/decode_logs')
-    log_dir = os.path.join('logs', 'decode_logs', os.path.basename(os.path.dirname(out_dir)))
-    if not os.path.isdir(log_dir):
-        os.system("mkdir -pv %s" % log_dir)
-    print('Log dir: ',log_dir)
+
+    decode_logs_dir = os.path.join(logs_dir, "decode_logs")
+    os.makedirs(decode_logs_dir, exist_ok=True)
+    log_dir = os.path.join(decode_logs_dir, os.path.basename(os.path.dirname(out_dir)))
+    os.makedirs(log_dir, exist_ok=True)
+    print('Log dir: ', log_dir)
     for dev_name, c in count_dic.items():
         print(dev_name, c)
-        with open('%s/%s.txt' %(log_dir, dev_name), "a+") as flog:
+        dev_file = os.path.join(log_dir, f"{dev_name}.txt")
+        with open(dev_file, "a+") as flog:
             for k, v in c.items(): 
                 flog.write('%s:%s  ' % (k, v))
             flog.write('\n')

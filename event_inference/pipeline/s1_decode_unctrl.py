@@ -1,5 +1,6 @@
 import sys
 import os
+from pathlib import Path
 import utils
 from utils import validate_ip_address, is_local
 from multiprocessing import Process
@@ -16,6 +17,12 @@ import pickle
 Process unctrl datasets. 
 
 """
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+logs_dir = os.path.join(event_inference_dir, "logs")  # Logs directory
 
 
 #is_error is either 0 or 1
@@ -389,7 +396,8 @@ def split(flow_dic, threshold=1):
                 diff = np.array(diff)
             except ValueError:
                 print('Time diff error: ', k, ts, diff, v[:,-1])
-                with open('./decoded_unctrl_error.txt', "a+") as errff:
+                error_log_file = os.path.join(event_inference_dir, "decoded_unctrl_error.txt")
+                with open(error_log_file, "a+") as errff:
                     errff.write('Time diff error: ')
                     errff.write('%s %s\n' %(v[0,-1], v[1,-1]))
                 # exit(1)
@@ -450,15 +458,16 @@ def run(files, out_dir, ip_hosts, result_list, count_dic):
                 count_dic[dev_name]['whois'] += count_tmp['whois']
                 count_dic[dev_name]['blank'] += count_tmp['blank']
                 count_dic[dev_name]['local'] += count_tmp['local']
-        if not os.path.isdir('./logs/decode_logs'):
-            os.system("mkdir -pv %s" % './logs/decode_logs')
-        log_dir = os.path.join('logs', 'decode_logs', os.path.basename(os.path.dirname(out_dir)))
-        if not os.path.isdir(log_dir):
-            os.system("mkdir -pv %s" % log_dir)
-        print('Log dir: ',log_dir)
+        
+        decode_logs_dir = os.path.join(logs_dir, "decode_logs")
+        os.makedirs(decode_logs_dir, exist_ok=True)
+        log_dir = os.path.join(decode_logs_dir, os.path.basename(os.path.dirname(out_dir)))
+        os.makedirs(log_dir, exist_ok=True)
+        print('Log dir: ', log_dir)
         for dev_name, c in count_dic.items():
             print(dev_name, c)
-            with open('%s/%s.txt' %(log_dir, dev_name), "a+") as flog:
+            dev_file = os.path.join(log_dir, f"{dev_name}.txt")
+            with open(dev_file, "a+") as flog:
                 for k, v in c.items(): 
                     flog.write('%s:%s  ' % (k, v))
                 flog.write('\n')
@@ -547,7 +556,7 @@ def main():
     ip_hosts_all = {}
 
     if in_txt.endswith('uncontrolled_dataset.txt') or in_txt.endswith('uncontrolled_dataset02.txt'):
-        model_file = './ip_host/uncontrolled_21-22_3month.model'
+        model_file = os.path.join(event_inference_dir, "ip_host", "uncontrolled_21-22_3month.model")
     else:
         exit(1)
     ip_hosts_all = pickle.load(open(model_file, 'rb'))

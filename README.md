@@ -19,7 +19,7 @@ docker build -t behaviot .
 
 Run with:
 ```bash
-docker run --rm --mount type=bind,source=$(pwd),target=/home/user/BehavIoT -it behaviot /bin/bash
+docker run --rm --mount type=bind,source=$(pwd),target=/root/BehavIoT -it behaviot /bin/bash
 ```
 
 
