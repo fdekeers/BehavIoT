@@ -3,27 +3,32 @@
 # Base image: Ubuntu 22.04 LTS
 FROM ubuntu:22.04
 
+WORKDIR /root
+
 # Install packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y tshark
 RUN apt-get update && apt-get install -y wget git graphviz python3-pip
 
 # Create non-root user
 ARG USER=user
-ARG UID=1000
+ARG UID
+ARG GROUP=docker
+ARG GID
 ARG HOME=/home/${USER}
-RUN groupadd --gid ${UID} ${USER} && \
-    useradd --uid ${UID} --gid ${UID} -m ${USER}
+RUN groupadd --gid ${GID} ${GROUP} && \
+    useradd --uid ${UID} --gid ${GID} -m ${USER}
 USER ${USER}
 WORKDIR ${HOME}
 
 # Install Python packages
 RUN pip3 install --no-warn-script-location \
+    numpy \
     matplotlib \
     scikit-learn \
     statsmodels \
     networkx \
-    pydot \
-    jupyter
+    pydot
+#    jupyter
 
 # Install Java 7
 #ARG JAVA_HOME=${HOME}/jdk1.7

@@ -12,15 +12,21 @@ year={2023}
 
 ## Docker container
 
-Build with:
+Pull with:
 ```bash
-docker build -t behaviot .
+docker pull fdekeers/behaviot
+```
+
+If you are a lone wolf, you can also build by yourself with:
+```bash
+docker build [-t IMAGE_TAG] --build-arg UID=$(id -u) --build-arg GID=$(id -g) .
 ```
 
 Run with:
 ```bash
-docker run --rm --mount type=bind,source=$(pwd),target=/root/BehavIoT -it behaviot /bin/bash
+docker run --rm --mount type=bind,source=$(pwd),target=/home/user/BehavIoT -it fdekeers/behaviot /bin/bash
 ```
+(If you built the image by yourself, replace `fdekeers/behaviot` with the tag you gave to your image.)
 
 
 ## [Event inference](event_inference/README.md)
