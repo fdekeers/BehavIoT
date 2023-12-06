@@ -181,9 +181,9 @@ def extract_pcap(in_pcap, out_txt, dev_name, ip_host):
             continue
         
         if my_device_mac == packet[11]:  # inbound traffic
-            host = extract_host_new(ip_dst, ip_src, ip_host, count_dic, cur_time.astype(np.float), whois_list)
+            host = extract_host_new(ip_dst, ip_src, ip_host, count_dic, cur_time.astype(float), whois_list)
         else:   # extract hostname for all outbound traffic
-            host = extract_host_new(ip_src, ip_dst, ip_host, count_dic, cur_time.astype(np.float), whois_list)
+            host = extract_host_new(ip_src, ip_dst, ip_host, count_dic, cur_time.astype(float), whois_list)
 
 
         host = host.lower()
@@ -295,7 +295,7 @@ def rm_retrans_dup(results):
     """
     for k in results.keys():
         ts = results[k][:, 1]
-        ts = ts.astype(np.float)
+        ts = ts.astype(float)
         # diff = results[k][:, 2]
         diff = [0] + [(ts[i + 1] - ts[i]) for i in range(len(ts)-1)]
         diff = np.array(diff)
@@ -389,9 +389,9 @@ def split(flow_dic, threshold=1):
 
             ts = v[:, 1]
             diff = v[:, 2]
-            # ts = ts.astype(np.float)
+            # ts = ts.astype(float)
             try:
-                diff = diff.astype(np.float)
+                diff = diff.astype(float)
                 # diff2 = [0] + [(ts[i + 1] - ts[i]) for i in range(len(ts)-1)]
                 diff = np.array(diff)
             except ValueError:

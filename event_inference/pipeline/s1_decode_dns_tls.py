@@ -123,8 +123,7 @@ def main():
     
     # output dir
     out_dir = os.path.join(event_inference_dir, "ip_host")
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
     
     if in_txt.endswith('routine_dns.txt'):
         model_file = os.path.join(out_dir, "routines.model")

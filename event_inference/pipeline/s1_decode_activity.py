@@ -284,7 +284,7 @@ def rm_retrans_dup(results):
     """
     for k in results.keys():
         ts = results[k][:, 1]
-        ts = ts.astype(np.float)
+        ts = ts.astype(float)
         # diff = results[k][:, 2]
         diff = [0] + [(ts[i + 1] - ts[i]) for i in range(len(ts)-1)]
         diff = np.array(diff)
@@ -375,9 +375,9 @@ def split(flow_dic, threshold=1):
             # try:
             ts = v[:, 1]
             diff = v[:, 2]
-            # ts = ts.astype(np.float)
+            # ts = ts.astype(float)
             try:
-                diff = diff.astype(np.float)
+                diff = diff.astype(float)
                 diff = np.array(diff)
             except ValueError:
                 print('Time diff error: ', k, ts, diff, v[:,-1])
@@ -433,7 +433,7 @@ def run(files, out_dir, ip_hosts):
     decode_logs_dir = os.path.join(logs_dir, "decode_logs")
     os.makedirs(decode_logs_dir, exist_ok=True)
     log_dir = os.path.join(decode_logs_dir, os.path.basename(os.path.dirname(out_dir)))
-    os.makedirs(log_dir)
+    os.makedirs(log_dir, exist_ok=True)
     print('Log dir: ', log_dir)
     for dev_name, c in count_dic.items():
         print(dev_name, c)

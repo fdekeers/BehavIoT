@@ -13,3 +13,5 @@ event_inference/ip_host/
 
 # Logs
 **/*.log
+**/*.error
+event_inference/logs/decode_logs

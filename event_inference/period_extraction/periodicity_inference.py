@@ -39,18 +39,19 @@ for v in lparas_sorted:
     print(v[1])    
 
 # load files
-file_path = 'freq_period/2021_1s'   # output file
+file_path = os.path.join("freq_period", "2021_1s")  # output file
 for a, b in enumerate(lparas):
     dname = lparas[a][-1]
-    if os.path.isfile('%s/%s.txt' % (file_path, dname)):
-        print('%sn exist' % dname)
+    device_file = os.path.join(file_path, f"{dname}.txt")
+    if os.path.isfile(device_file):
+        print(f"{dname} exists")
         continue
     data = pd.read_csv(lparas[a][0])
 
     # set start and end time
     print('Dname ', dname)
     print(data.size)
-    if dname=='govee-led1' or dname=='philips-bulb':    # experiment time differs from others 
+    if dname == 'govee-led1' or dname == 'philips-bulb':    # experiment time differs from others 
         pass
     else:
         data = data.loc[(data['start_time'] <= 1631120400)] 
@@ -206,8 +207,8 @@ for a, b in enumerate(lparas):
             x = list(map(lambda x:x-x_min_tmp,x))
             y = list(requestOrdered.values())
 
-
-            os.makedirs('%s/%s' % (file_path,dname), exist_ok=True)
+            device_dir = os.path.join(file_path, dname)
+            os.makedirs(device_file, exist_ok=True)
 
             """
             Plot time domain 
