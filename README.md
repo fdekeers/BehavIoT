@@ -1,6 +1,6 @@
 # BehavIoT
-This repository is a fork of the code for the following IMC23 paper:
-
+This repository is a fork of the code for the [IMC23 paper dubbed BehavIoT](https://dl.acm.org/doi/10.1145/3618257.3624829).
+Paper BibTeX reference:
 ```
 @inproceedings{hu-imc23,
 title={{BehavIoT: Measuring Smart Home IoT Behavior Using Network-Inferred Behavior Models}},
@@ -10,19 +10,26 @@ year={2023}
 }
 ```
 
+A Docker container image has been developed to ease the reproducibility of experiments.
+
+
 ## Docker container
 
-Pull with:
+Pull the image with:
 ```bash
 docker pull fdekeers/behaviot
 ```
 
-If you are a lone wolf, you can also build by yourself with:
+If you are a lone wolf, you can also build the image by yourself by yourself.
+To do that, you will first need to download the tarball for Oracle JDK 7,
+by taking a look at [Oracle's website](https://www.oracle.com/be/java/technologies/javase/javase7-archive-downloads.html),
+and put the tarball at this repository's root directory.
+Then, execute the following command:
 ```bash
 docker build [-t IMAGE_TAG] --build-arg UID=$(id -u) --build-arg GID=$(id -g) .
 ```
 
-Run with:
+Run a container instance with:
 ```bash
 docker run --rm --mount type=bind,source=$(pwd),target=/home/user/BehavIoT -it fdekeers/behaviot /bin/bash
 ```
