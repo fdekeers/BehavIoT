@@ -229,7 +229,7 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     num_of_state = len(set(y_labels_test))
 
     log_dir = os.path.join(root_model, '%s_logs' % dataset)
-    os.system('mkdir -pv %s' % log_dir)
+    os.makedirs(log_dir, exist_ok=True)
 
     host_protocol_dic = {}
     for i in range(len(test_feature)):
@@ -237,7 +237,7 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
             host_protocol_dic[(test_hosts[i], test_protocols[i])] = 1
         else:
             host_protocol_dic[(test_hosts[i], test_protocols[i])] += 1
-    with open(os.path.join(log_dir,'%s.txt' % dname),'a+') as f:
+    with open(os.path.join(log_dir, f"{dname}.txt"),'a+') as f:
         f.write('=================\n')
         for k, v in host_protocol_dic.items():
             f.write('\n%s %s: %d\n' % (k[0], k[1], v))
@@ -404,7 +404,7 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
         Save the logs
         """
         
-        with open(os.path.join(log_dir,'%s.txt' % dname),'a+') as f:
+        with open(os.path.join(log_dir, f"{dname}.txt"),'a+') as f:
             f.write('%s %s: ' % (tmp_proto, tmp_host))
             f.write('\nFlows left: %d %d %2f\n\n' % (count_left, test_feature_part.shape[0], count_left/test_feature_part.shape[0] ))
 
@@ -414,17 +414,17 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
             host_protocol_dic[(test_hosts[i], test_protocols[i])] = 1
         else:
             host_protocol_dic[(test_hosts[i], test_protocols[i])] += 1
-    with open(os.path.join(log_dir,'%s.txt' % dname),'a+') as f:
+    with open(os.path.join(log_dir, f"{dname}.txt"),'a+') as f:
         f.write('\n')
         for k, v in host_protocol_dic.items():
             f.write('\n%s %s: %d\n' % (k[0], k[1], v))
     """
     Logging
     """
-    print('Flows left: ', len(test_feature)/len_test_before,len(test_feature), len_test_before)
-    print('Activity left: ',len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event)
-    with open(os.path.join(root_model,'%s_results.txt' % dataset),'a+') as f:
-        f.write('%s' % dname)
+    print('Flows left: ', len(test_feature)/len_test_before, len(test_feature), len_test_before)
+    print('Activity left: ', len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event)
+    with open(os.path.join(root_model, f"{dataset}_results.txt"), 'a+') as f:
+        f.write(f"{dname}")
         f.write('\nFlows left: %2f %d %d' % (len(test_feature)/len_test_before,len(test_feature), len_test_before))
         f.write('\nActivity left: %2f %d %d \n\n' % (len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event))
     test_feature = pd.DataFrame(test_feature)

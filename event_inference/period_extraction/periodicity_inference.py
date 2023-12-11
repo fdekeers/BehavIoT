@@ -27,11 +27,7 @@ for csv_file in os.listdir(root_feature):
             device_name = csv_file.replace('csv', '')
             device_names.append(device_name)
             train_data_file = os.path.join(root_feature, csv_file)
-
-
             dname = csv_file[:-4]
-
-
             lparas.append((train_data_file, dname))
 
 lparas_sorted = sorted(lparas,key=lambda x:x[1])
@@ -208,7 +204,7 @@ for a, b in enumerate(lparas):
             y = list(requestOrdered.values())
 
             device_dir = os.path.join(file_path, dname)
-            os.makedirs(device_file, exist_ok=True)
+            os.makedirs(device_dir, exist_ok=True)
 
             """
             Plot time domain 
@@ -219,8 +215,8 @@ for a, b in enumerate(lparas):
             plt.xlabel('time')
             plt.ylabel('volume')
             plt.yscale("log")
-            plt.title('%s'% (dname))
-            plt.savefig('%s/%s/%s_%s.png' % (file_path,dname,cur_domain, cur_protocol))
+            plt.title(dname)
+            fig_path = os.path.join(file_path, dname, f"{cur_domain}_{cur_protocol}.png")
             # plt.show()
             plt.close()
             count=0
@@ -360,19 +356,18 @@ for a, b in enumerate(lparas):
             plt.figure()
             plt.plot(xf, 1.0/N * np.abs(yf[0:N//2]))
             plt.grid()
-            plt.savefig('%s/%s/%s_%s_fft.png' % (file_path,dname,cur_domain, cur_protocol))
+            plt.savefig(os.path.join(file_path, dname, f"{cur_domain}_{cur_protocol}_fft.png"))
             plt.close()
 
             print('--------------------------------------------------------')
             
-            with open('%s/%s.txt' % (file_path,dname), 'a+') as file:
-                    if len(period) > 0 and any(autocorrelation): # and len(acf_burst) > 1
-                        file.write('\n%s %s # %d: ' %(cur_protocol,cur_domain,domain_count[cur_domain]))
-                        file.write(' best: %d'% (list(autocorrelation)[0][0]  ))
-                        if len(list(autocorrelation)) > 1:
-                            file.write(', %d'% (list(autocorrelation)[1][0]  ))
-                        
-                
-                    else:
-                        file.write('\nNo period detected %s %s # %d ' %(cur_protocol,cur_domain, domain_count[cur_domain])) 
+            with open(device_file, 'a+') as file:
+                if len(period) > 0 and any(autocorrelation): # and len(acf_burst) > 1
+                    file.write(f"\n{cur_protocol} {cur_domain} # {domain_count[cur_domain]}: ")
+                    file.write(f" best: {list(autocorrelation)[0][0]}")
+                    if len(list(autocorrelation)) > 1:
+                        file.write(f", {list(autocorrelation)[1][0]}")
+                    
+                else:
+                    file.write(f"\nNo period detected {cur_protocol} {cur_domain} # {domain_count[cur_domain]} ") 
     

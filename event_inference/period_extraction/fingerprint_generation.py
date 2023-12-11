@@ -1,11 +1,17 @@
 import os
 import re
-device_names = []
-dirc = './freq_period/1s/'
-dirc2 = './freq_period/1h/'
 
-out_dir = './freq_period/fingerprints/'
-non_dir = './freq_period/nonperiod/'
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+parent_dir = script_path.parents[1]            # This script's parent directory
+
+device_names = []
+dirc = os.path.join(script_dir, "freq_period", "2021_1s")
+dirc2 = os.path.join(script_dir, "freq_period", "2021_1h")
+
+out_dir = os.path.join(script_dir, "freq_period", "fingerprints")
+non_dir = os.path.join(script_dir, "freq_period", "nonperiod")
 All_total = 0
 All_nonperoid = 0
 All_period = 0
@@ -88,18 +94,18 @@ for file in os.listdir(dirc):  #  /freq_new/
             for key in output_dic.keys():
                 if len(output_dic[key]) == 1:
                     tmp_period = output_dic[key][0]
-                    out_file.write('%s %s %d \n' %(key[0], key[1], tmp_period))
+                    out_file.write(f"{key[0]} {key[1]} {tmp_period} \n")
                 else:
-                    out_file.write('%s %s %d %d \n' %(key[0], key[1], output_dic[key][0], output_dic[key][1]))
+                    out_file.write(f{key[0]} {key[1]} {output_dic[key][0]} {output_dic[key][1]})
                 
-            print('non-period: ',non_nums)
-            print('period: ',is_nums)
-            print('total: ',total_number)
+            print('non-period: ', non_nums)
+            print('period: ', is_nums)
+            print('total: ', total_number)
             print('')
             All_total += total_number
             All_period += is_nums
             All_nonperoid += non_nums
 
-print('All non-period: ',All_nonperoid)
-print('All period: ',All_period)
-print('All total: ',All_total)
+print('All non-period: ', All_nonperoid)
+print('All period: ', All_period)
+print('All total: ', All_total)

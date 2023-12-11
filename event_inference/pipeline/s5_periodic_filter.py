@@ -457,10 +457,10 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         Save the model / logs
         """
         log_dir = os.path.join(root_model, 'logs')
-        os.system('mkdir -pv %s' % log_dir)
-        with open(os.path.join(log_dir,'%s.txt' % dname),'a+') as f:
-            f.write('%s %s: ' % (tmp_proto, tmp_host))
-            f.write('\nFlows left: %d %d %2f\n\n' % (count_left, test_feature_part.shape[0], count_left/test_feature_part.shape[0] ))
+        os.makedirs(log_dir, exist_ok=True)
+        with open(os.path.join(log_dir, f"{dname}.txt"), 'a+') as f:
+            f.write(f"{tmp_proto, tmp_host}")
+            f.write(f"\nFlows left: {count_left} {test_feature_part.shape[0]} {count_left/test_feature_part.shape[0]:.2f}\n\n")
 
         model_dictionary = dict({'trained_model':model})
         pickle.dump(model_dictionary, open(model_file, 'wb'))
