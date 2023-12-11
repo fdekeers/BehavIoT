@@ -7,7 +7,7 @@ WORKDIR /root
 
 # Install packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y tshark
-RUN apt-get update && apt-get install -y wget git graphviz python3-pip
+RUN apt-get update && apt-get install -y dnsutils wget git graphviz python3-pip
 
 # Create non-root user
 ARG USER=user

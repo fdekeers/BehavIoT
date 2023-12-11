@@ -101,7 +101,7 @@ def main():
     for dev_dir in os.listdir(in_dir):
         if dev_dir.startswith("."):
             continue
-        training_file = os.path.join(out_dir, dev_dir + '.csv') #Output file
+        training_file = os.path.join(out_dir, f"{dev_dir}.csv") #Output file
         # Check if output file exists
         # if os.path.exists(training_file):
         #     print('Features for %s prepared already in %s' % (dev_dir, training_file))
@@ -110,33 +110,35 @@ def main():
         for act_dir in os.listdir(full_dev_dir):
             full_act_dir = os.path.join(full_dev_dir, act_dir)
             if act_dir == 'unctrl' or act_dir == 'unctr'  or act_dir == 'idle':
-                for dec_file in os.listdir(full_act_dir):
-                    full_dec_file = os.path.join(full_act_dir, dec_file)
-                    if not full_dec_file.endswith(".txt"):
-                        print(c.WRONG_EXT % ("Decoded file", "text (.txt)", full_dec_file), file=sys.stderr)
-                        continue
-                    if not os.path.isfile(full_dec_file):
-                        print(c.INVAL % ("Decoded file", full_dec_file, "file"), file=sys.stderr)
-                        continue
-                    if not os.access(full_dec_file, os.R_OK):
-                        print(c.NO_PERM % ("decoded file", full_dec_file, "read"), file=sys.stderr)
-                        continue
+                for dec_dir in os.listdir(full_act_dir):
+                    full_dec_dir = os.path.join(full_act_dir, dec_dir)
+                    for dec_file in os.listdir(full_dec_dir):
+                        full_dec_file = os.path.join(full_dec_dir, dec_file)
+                        if not full_dec_file.endswith(".txt"):
+                            print(c.WRONG_EXT % ("Decoded file", "text (.txt)", full_dec_file), file=sys.stderr)
+                            continue
+                        if not os.path.isfile(full_dec_file):
+                            print(c.INVAL % ("Decoded file", full_dec_file, "file"), file=sys.stderr)
+                            continue
+                        if not os.access(full_dec_file, os.R_OK):
+                            print(c.NO_PERM % ("decoded file", full_dec_file, "read"), file=sys.stderr)
+                            continue
 
-                    if 'companion' in dec_file:
-                        state = '%s_companion_%s' % (act_dir, dev_dir)
-                        device = dec_file.split('.')[-2] # the word before pcap
-                    else:
-                        state = act_dir
-                        device = dev_dir
-                        event = act_dir
-                    feature_file = os.path.join(out_dir, 'caches', device + '_' + state
-                                + '_' + dec_file[:-4] + '.csv') #Output cache files
-                    #the file, along with some data about it
-                    paras = (full_dec_file, feature_file, group_size, device, state, event)
-                    #Dict contains devices that do not have an output file
-                    if device not in dict_dec:
-                        dict_dec[device] = []
-                    dict_dec[device].append(paras)
+                        if 'companion' in dec_file:
+                            state = '%s_companion_%s' % (act_dir, dev_dir)
+                            device = dec_file.split('.')[-2] # the word before pcap
+                        else:
+                            state = act_dir
+                            device = dev_dir
+                            event = act_dir
+                        feature_file = os.path.join(out_dir, 'caches', device + '_' + state
+                                    + '_' + dec_file[:-4] + '.csv') #Output cache files
+                        #the file, along with some data about it
+                        paras = (full_dec_file, feature_file, group_size, device, state, event)
+                        #Dict contains devices that do not have an output file
+                        if device not in dict_dec:
+                            dict_dec[device] = []
+                        dict_dec[device].append(paras)
             else:
                 for event_dir in os.listdir(full_act_dir):
                     full_event_dir = os.path.join(full_act_dir, event_dir)
@@ -238,13 +240,12 @@ def extract_features(dec_file, feature_file, device_name, state, event):
     if state == "power":
         return
 
-
     # print("In decoded: %s\n  Out features: %s" % (dec_file, feature_file))
     feature_data = pd.DataFrame()
 
-
     d = compute_tbp_features(pd_obj, device_name, state, event)
-    feature_data = feature_data.append(pd.DataFrame(data=[d], columns=col_feat))
+    #feature_data = feature_data.append(pd.DataFrame(data=[d], columns=col_feat))
+    pd.concat([feature_data, pd.DataFrame(data=[d], columns=col_feat)])
     return feature_data
 
 

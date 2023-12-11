@@ -49,7 +49,7 @@ def is_local(ip_src, ip_dst):
 
 def dig_x(ip):
     domain_name = ''
-    # dig - x ip +short
+    # dig -x ip +short
     command = ["dig", "-x", ip, "+short"]
     process = Popen(command, stdout=PIPE, stderr=PIPE)
     # Get output. Give warning message if any

@@ -10,22 +10,22 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ) 
 ### Event inference
 EVENT_INFERENCE_DIR=$SCRIPT_DIR/event_inference
 PIPELINE_DIR=$EVENT_INFERENCE_DIR/pipeline
-INPUTS_DIR=$EVENT_INFERENCE_DIR/inputs/2021
+INPUT_DIR=$EVENT_INFERENCE_DIR/inputs/2021
 DATA_DIR=$EVENT_INFERENCE_DIR/data
 LOGS_DIR=$EVENT_INFERENCE_DIR/logs
 
 ## 1. Decoding
 # 1.1. Hostname-IP mapping
-python3 $PIPELINE_DIR/s1_decode_dns_tls.py $INPUTS_DIR/idle_dns.txt > $LOGS_DIR/1-decoding/1-dns-mapping-idle.log 2> $LOGS_DIR/1-decoding/1-dns-mapping-idle.error
-python3 $PIPELINE_DIR/s1_decode_dns_tls.py $INPUTS_DIR/activity_dns.txt > $LOGS_DIR/1-decoding/2-dns-mapping-activity.log 2> $LOGS_DIR/1-decoding/2-dns-mapping-activity.error
+python3 $PIPELINE_DIR/s1_decode_dns_tls.py $INPUT_DIR/idle_dns.txt > $LOGS_DIR/1-decoding/1-dns-mapping-idle.log 2> $LOGS_DIR/1-decoding/1-dns-mapping-idle.error
+python3 $PIPELINE_DIR/s1_decode_dns_tls.py $INPUT_DIR/activity_dns.txt > $LOGS_DIR/1-decoding/2-dns-mapping-activity.log 2> $LOGS_DIR/1-decoding/2-dns-mapping-activity.error
 # 1.2. Run decoding
-python3 $PIPELINE_DIR/s1_decode_idle.py $INPUTS_DIR/idle-2021.txt $DATA_DIR/idle-2021-decoded/ $NPROCS > $LOGS_DIR/1-decoding/3-decode-idle.log 2> $LOGS_DIR/1-decoding/3-decode-idle.error
-python3 $PIPELINE_DIR/s1_decode_activity.py $INPUTS_DIR/train.txt $DATA_DIR/train-decoded/ $NPROCS > $LOGS_DIR/1-decoding/4-decode-train.log 2> $LOGS_DIR/1-decoding/4-decode-train.error
-python3 $PIPELINE_DIR/s1_decode_activity.py $INPUTS_DIR/test.txt $DATA_DIR/test-decoded/ $NPROCS > $LOGS_DIR/1-decoding/4-decode-test.log 2> $LOGS_DIR/1-decoding/4-decode-test.error
+python3 $PIPELINE_DIR/s1_decode_idle.py $INPUT_DIR/idle-2021.txt $DATA_DIR/idle-2021-decoded/ $NPROCS > $LOGS_DIR/1-decoding/3-decode-idle.log 2> $LOGS_DIR/1-decoding/3-decode-idle.error
+python3 $PIPELINE_DIR/s1_decode_activity.py $INPUT_DIR/train.txt $DATA_DIR/train-decoded/ $NPROCS > $LOGS_DIR/1-decoding/4-decode-train.log 2> $LOGS_DIR/1-decoding/4-decode-train.error
+python3 $PIPELINE_DIR/s1_decode_activity.py $INPUT_DIR/test.txt $DATA_DIR/test-decoded/ $NPROCS > $LOGS_DIR/1-decoding/4-decode-test.log 2> $LOGS_DIR/1-decoding/4-decode-test.error
 
 ## 2. Feature extraction
 # 2.1. On decoded traffic
-python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/idle-2021-decoded/ $DATA_DIR/idle-2021-features/ > $LOGS_DIR/2-feature-generation/1-features-idle.log 2> $LOGS_DIR/2-feature-generation/1-features-idle.error
+python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/idle-2021-decoded/ $DATA_DIR/idle-2021-features/ $NPROCS > $LOGS_DIR/2-feature-generation/1-features-idle.log 2> $LOGS_DIR/2-feature-generation/1-features-idle.error
 python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/train-decoded/ $DATA_DIR/train-features/ > $LOGS_DIR/2-feature-generation/2-features-train.log 2> $LOGS_DIR/2-feature-generation/2-features-train.error
 python3 $PIPELINE_DIR/s2_get_features.py $DATA_DIR/test-decoded/ $DATA_DIR/test-features/ > $LOGS_DIR/2-feature-generation/3-features-test.log 2> $LOGS_DIR/2-feature-generation/3-features-test.error
 # 2.2. On routine dataset
