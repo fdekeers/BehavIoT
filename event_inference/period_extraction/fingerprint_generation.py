@@ -96,7 +96,7 @@ for file in os.listdir(dirc):  #  /freq_new/
                     tmp_period = output_dic[key][0]
                     out_file.write(f"{key[0]} {key[1]} {tmp_period} \n")
                 else:
-                    out_file.write(f{key[0]} {key[1]} {output_dic[key][0]} {output_dic[key][1]})
+                    out_file.write(f"{key[0]} {key[1]} {output_dic[key][0]} {output_dic[key][1]}")
                 
             print('non-period: ', non_nums)
             print('period: ', is_nums)

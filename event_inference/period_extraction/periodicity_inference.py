@@ -35,7 +35,7 @@ for v in lparas_sorted:
     print(v[1])    
 
 # load files
-file_path = os.path.join("freq_period", "2021_1s")  # output file
+file_path = os.path.join(script_dir, "freq_period", "2021_1s")  # output file
 for a, b in enumerate(lparas):
     dname = lparas[a][-1]
     device_file = os.path.join(file_path, f"{dname}.txt")

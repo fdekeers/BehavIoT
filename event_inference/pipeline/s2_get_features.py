@@ -94,8 +94,8 @@ def main():
     group_size = 50
     dict_dec = dict()
     dircache = os.path.join(out_dir, 'caches')
-    if not os.path.exists(dircache):
-        os.system('mkdir -pv %s' % dircache)
+    os.makedirs(dircache, exist_ok=True)
+
     # Parse input file names
     # in_dir/dev_dir/act_dir/dec_file
     for dev_dir in os.listdir(in_dir):
@@ -131,8 +131,7 @@ def main():
                             state = act_dir
                             device = dev_dir
                             event = act_dir
-                        feature_file = os.path.join(out_dir, 'caches', device + '_' + state
-                                    + '_' + dec_file[:-4] + '.csv') #Output cache files
+                        feature_file = os.path.join(out_dir, "caches", f"{device}_{state}_{dec_file[:-4]}.csv")  #Output cache files
                         #the file, along with some data about it
                         paras = (full_dec_file, feature_file, group_size, device, state, event)
                         #Dict contains devices that do not have an output file
@@ -161,8 +160,7 @@ def main():
                             state = act_dir
                             device = dev_dir
                             event = event_dir
-                        feature_file = os.path.join(out_dir, 'caches', device + '_' + state
-                                    + '_' + dec_file[:-4] + '.csv') #Output cache files
+                        feature_file = os.path.join(out_dir, "caches", f"{device}_{state}_{dec_file[:-4]}.csv")  #Output cache files
                         #the file, along with some data about it
                         paras = (full_dec_file, feature_file, group_size, device, state, event)
                         #Dict contains devices that do not have an output file
@@ -174,7 +172,7 @@ def main():
     print("Feature files to be generated from the following devices:", devices)
 
     for device in dict_dec:
-        training_file = os.path.join(out_dir, device + '.csv')
+        training_file = os.path.join(out_dir, f"{device}.csv")
         list_paras = dict_dec[device]
 
         #create groups to run with processes
@@ -199,7 +197,7 @@ def main():
         if len(results) > 0:
             pd_device = pd.concat(results, ignore_index=True) #Concat all cache files together
             pd_device.to_csv(training_file, index=False) #Put in CSV file
-            print("Results concatenated to %s" % training_file)
+            print(f"Results concatenated to {training_file}")
 
 
 def run(paras_list, results):
@@ -244,8 +242,14 @@ def extract_features(dec_file, feature_file, device_name, state, event):
     feature_data = pd.DataFrame()
 
     d = compute_tbp_features(pd_obj, device_name, state, event)
+    
+    ## Old, using DataFrame.append (deprecated / removed)
     #feature_data = feature_data.append(pd.DataFrame(data=[d], columns=col_feat))
-    pd.concat([feature_data, pd.DataFrame(data=[d], columns=col_feat)])
+
+    # New, using pandas.concat
+    new_data = pd.DataFrame(data=[d], columns=col_feat)
+    feature_data = pd.concat([feature_data, new_data], ignore_index=True)
+
     return feature_data
 
 
