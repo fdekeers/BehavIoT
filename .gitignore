@@ -5,8 +5,9 @@ data/
 **/*.tar.gz
 **/*.tgz
 
-# Pycache
+# Python files
 **/__pycache__
+venv
 
 # Output files
 event_inference/ip_host/
@@ -15,3 +16,6 @@ event_inference/ip_host/
 **/*.log
 **/*.error
 event_inference/logs/decode_logs
+
+# Temp files
+test.py
