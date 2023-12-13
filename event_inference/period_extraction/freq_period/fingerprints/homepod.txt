@@ -1,27 +1,27 @@
-MDNS multicast 9 172800 
-DNS neu.edu 960 172800 
-TCP cl3.apple.com 86400 172800 
-TCP gsa.apple.com 42991 86400 
-TCP e17437.dscb.akamaiedge.net 10875 
-TCP mesu.apple.com 960 
+DNS neu.edu 960 
 TCP kt-prod.apple.com 43181 
-TCP *.com.akadns.net 960 
-TCP valid.apple.com 10845 21600 
-TCP *.itunes.apple.com 20 172800 
-TCP iphonesubmissions.apple.com 30 
-TCP swallow.apple.com 86445 172800 
-TCP *.g.aaplimg.com 7200 
-TCP xp.apple.com 43019 86400 
-TCP *.push.apple.com 301 
-TCP e673.dsce9.akamaiedge.net 20 28800 
-TCP *.fe.apple-dns.net 83926 172800 
-TCP e1329.g.akamaiedge.net 960 
-TCP gsas.apple.com 30 172800 
-TCP gateway.icloud.com 86613 172800 
-TCP *.ls.apple.com 28800 57600 
-TCP ocsp2.apple.com 28800 
-TCP guzzoni.apple.com 22 172800 
-TCP setup.icloud.com 86086 172800 
 TCP clientflow.apple.com 7200 
-NTP time-osx.g.aaplimg.com 2059 28800 
-NTP time.apple.com 2070 28800 
+TCP valid.apple.com 10890 
+TCP gsa.apple.com 42991 
+TCP *.itunes.apple.com 20 
+TCP cl3.apple.com 86400 
+TCP *.dsce9.akamaiedge.net 20 
+TCP mesu.apple.com 960 
+TCP guzzoni.apple.com 85800 
+TCP guzzoni-apple-com.v.aaplimg.com 78439 
+TCP ocsp2.apple.com 28800 
+TCP gsas.apple.com 30 
+TCP *.g.aaplimg.com 7200 
+TCP setup.icloud.com 86760 
+TCP *.ls.apple.com 26 
+TCP a1806.dscb.akamai.net 81294 
+TCP *.com.akadns.net 960 
+TCP iphonesubmissions.apple.com 30 
+TCP xp.apple.com 43399 
+TCP swallow.apple.com 86445 
+TCP *.push.apple.com 301 
+TCP e1329.g.akamaiedge.net 960 
+TCP gateway.icloud.com 86613 
+NTP time.apple.com 2070 
+NTP time-osx.g.aaplimg.com 2059 
+MDNS multicast 9 

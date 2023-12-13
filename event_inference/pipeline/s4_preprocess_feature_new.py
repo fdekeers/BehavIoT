@@ -39,7 +39,7 @@ def print_usage(is_error):
 
 def main():
 
-    global  root_output, dir_tsne_plots , root_feature, root_model, root_test, root_test_out
+    global root_output, dir_tsne_plots, root_feature, root_model, root_test, root_test_out
 
     # Parse Arguments
     parser = argparse.ArgumentParser(usage=c.PREPRO_USAGE, add_help=False)
@@ -55,7 +55,11 @@ def main():
 
     # Error checking command line args
     root_feature = args.root_feature
+    if root_feature.endswith("/"):
+        root_feature = root_feature[:-1]
     root_model = args.root_pre_train
+    if root_model.endswith("/"):
+        root_model = root_model[:-1]
 
     errors = False
     #check -i in features
@@ -103,9 +107,9 @@ def train_models():
     """
     Scan feature folder for each device
     """
-    print('root_feature: %s' % root_feature)
-    print('root_model: %s' % root_model)
-    print('root_output: %s' % root_output)
+    print(f"root_feature: {root_feature}")
+    print(f"root_model: {root_model}")
+    print(f"root_output: {root_output}")
 
     lparas = []
 
@@ -114,10 +118,11 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            idle_data_file = '%s/%s' % (root_feature, csv_file)
+            idle_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
 
-            lparas.append((idle_data_file, dname, random_state))
+            lparas.append((idle_data_file, dname)) #, random_state))
+
     p = Pool(num_pools)
     t0 = time.time()
     list_results = p.map(eid_wrapper, lparas)
@@ -136,34 +141,35 @@ def train_models():
 
 
 def eid_wrapper(a):
-    return eval_individual_device(a[0], a[1], a[2])
+    return eval_individual_device(a[0], a[1]) #, a[2])
 
 
 def eval_individual_device(idle_data_file, dname):
     global root_feature, root_model, root_test, root_test_out
 
     
-    # dirctories 
-    train_feature_dir = '%s%s' % (root_feature[0:5], 'train-features') 
-    test_feature_dir = '%s%s' % (root_feature[0:5], 'test-features') 
-    test_std_dir = '%s%s%s' % (root_model[0:5], 'test' , '-std')
-    test_pca_dir = '%s%s%s' % (root_model[0:5], 'test' , '-pca')
+    # directories
+    root_feature_dir = Path(root_feature)
+    train_feature_dir = os.path.join(root_feature_dir.parents[0], "train-features") 
+    test_feature_dir = os.path.join(root_feature_dir.parents[0], "test-features") 
+    root_model_dir = Path(root_model)
+    test_std_dir = os.path.join(root_model_dir.parents[0], "test-std") 
+    test_pca_dir = os.path.join(root_model_dir.parents[0], "test-pca")
     # print('Test feature:',test_feature_dir)
 
     # train data file, std&pca files
-    train_data_file = '%s/%s.csv' %(train_feature_dir, dname)
-    train_std_dir = '%s%s' % (root_model[:-1], '-std' )
-    std_train_file = '%s/%s.csv' % (train_std_dir, dname)
-    train_pca_dir = '%s%s' % (root_model[:-1], '-pca' )
-    pca_train_file = '%s/%s.csv' % (train_pca_dir, dname)
+    train_data_file = os.path.join(train_feature_dir, f"{dname}.csv")
+    train_std_dir = f"{root_model}-std"
+    std_train_file = os.path.join(train_std_dir, f"{dname}.csv")
+    train_pca_dir = f"{root_model}-pca"
+    pca_train_file = os.path.join(train_pca_dir, f"{dname}.csv")
 
     # test data file, std&pca files
-    test_file = '%s/%s.csv' % (test_feature_dir, dname)
-    std_test_file = '%s/%s.csv' % (test_std_dir, dname)
-    pca_test_file = '%s/%s.csv' % (test_pca_dir, dname)
+    test_file = os.path.join(test_feature_dir, f"{dname}.csv")
+    std_test_file = os.path.join(test_std_dir, f"{dname}.csv")
+    pca_test_file = os.path.join(test_pca_dir, f"{dname}.csv")
 
-    # idle_file = './data/idle-2021-features/%s.csv' % dname
-
+    #idle_file = os.path.join(data_dir, "idle-2021-features", f"{dname}.csv")
     routines_file = os.path.join(data_dir, "trace-features", f"{dname}.csv")
     if not os.path.isfile(routines_file):
         with_routines = False
@@ -172,11 +178,8 @@ def eval_individual_device(idle_data_file, dname):
         routines_data = pd.read_csv(routines_file)
 
         
-    if not os.path.exists(train_std_dir):
-        os.mkdir(train_std_dir)
-
-    if not os.path.exists(test_std_dir):
-        os.mkdir(test_std_dir)
+    os.makedirs(train_std_dir, exist_ok=True)
+    os.makedirs(test_std_dir, exist_ok=True)
 
     
     # idle dirctories
@@ -201,17 +204,15 @@ def eval_individual_device(idle_data_file, dname):
 
     if with_routines:
         routines_std_dir = os.path.join(data_dir, "routines-std")
+        os.makedirs(routines_std_dir, exist_ok=True)
         routines_pca_dir = os.path.join(data_dir, "routines-pca")
-        routines_std_file = '%s/%s.csv' % ( routines_std_dir, dname) 
-        routines_pca_file = '%s/%s.csv' % ( routines_pca_dir, dname) 
-        if not os.path.exists(routines_std_dir):
-            os.mkdir(routines_std_dir)
-        # if not os.path.exists(routines_pca_dir):
-        #     os.mkdir(routines_pca_dir)
+        os.makedirs(routines_pca_dir, exist_ok=True)
+        routines_std_file = os.path.join(routines_std_dir, f"{dname}.csv") 
+        routines_pca_file = os.path.join(routines_pca_dir, f"{dname}.csv") 
 
 
     if not os.path.isfile(idle_data_file):
-        print('%s idle do not exist' % dname)
+        print(f"{dname} idle do not exist")
         return
 
     only_idle = False
@@ -234,7 +235,7 @@ def eval_individual_device(idle_data_file, dname):
 
         
     # read idle files
-    idle_data = pd.read_csv(idle_data_file)
+    idle_data = pd.read_csv(idle_data_file, low_memory=False)
     if dname=='govee-led1' or dname=='philips-bulb':
             pass
     else:
@@ -288,9 +289,11 @@ def eval_individual_device(idle_data_file, dname):
         exit(1)
     
 
-    ss= StandardScaler()
+    ss = StandardScaler()
 
     # ss
+    print("X_feature", X_feature)
+    
     X_all_std = ss.fit_transform(X_feature)
     if not only_idle:
         test_data_std = ss.transform(test_data_feature)
@@ -306,9 +309,10 @@ def eval_individual_device(idle_data_file, dname):
     '''
     Save ss and pca
     '''
-    model_path = './model/SS_PCA'
+    models_path = os.path.join(event_inference_dir, "model", "SS_PCA")
     saved_dictionary = dict({'ss':ss}) # ,'pca':pca
-    pickle.dump(saved_dictionary, open("%s/%s.pkl"%(model_path,dname),"wb"))
+    model_file_path = os.path.join(models_path, f"{dname}.pkl")
+    pickle.dump(saved_dictionary, open(model_file_path, "wb"))
 
     
     if only_idle:

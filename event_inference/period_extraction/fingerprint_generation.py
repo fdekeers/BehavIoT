@@ -9,7 +9,7 @@ parent_dir = script_path.parents[1]            # This script's parent directory
 
 device_names = []
 dirc = os.path.join(script_dir, "freq_period", "2021_1s")
-dirc2 = os.path.join(script_dir, "freq_period", "2021_1h")
+#dirc2 = os.path.join(script_dir, "freq_period", "2021_1h")
 
 out_dir = os.path.join(script_dir, "freq_period", "fingerprints")
 non_dir = os.path.join(script_dir, "freq_period", "nonperiod")
@@ -24,12 +24,13 @@ for file in os.listdir(dirc):  #  /freq_new/
             print(device_name)
 
             f = open(os.path.join(dirc, file)) # './freq_new/'+
-            f2 = open(os.path.join(dirc2, file))
+            #f2 = open(os.path.join(dirc2, file))
 
             out_file_path = os.path.join(out_dir, file)
             out_file = open(out_file_path, 'w+')
-            non_file_path(os.path.join(non_dir, file))
-            non_file = open(non_file_path, 'w+')
+            #non_file_path = os.path.join(non_dir, file)
+            #non_file = open(non_file_path, 'w+')
+
             non_nums = 0
             is_nums = 0
             total_number = 0
@@ -62,6 +63,7 @@ for file in os.listdir(dirc):  #  /freq_new/
                     # out_file.write('%s %s %d \n' %(protocol, domain_name, tmp_period))
 
 
+            """
             for line in f2:
                 if line=='\n':
                     continue
@@ -92,6 +94,7 @@ for file in os.listdir(dirc):  #  /freq_new/
                     else:
                         output_dic[(protocol, domain_name)] = [tmp_period]
                         is_nums += int(re.findall(r'# \d+', line)[0].split()[-1])
+            """
 
             
             for key in output_dic.keys():
@@ -108,6 +111,9 @@ for file in os.listdir(dirc):  #  /freq_new/
             All_total += total_number
             All_period += is_nums
             All_nonperoid += non_nums
+
+            out_file.close()
+            #non_file.close()
 
 print('All non-period: ', All_nonperoid)
 print('All period: ', All_period)
