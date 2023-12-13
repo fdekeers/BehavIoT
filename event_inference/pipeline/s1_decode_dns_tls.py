@@ -111,7 +111,6 @@ def main():
                 # if os.path.basename(pcap).startswith('2021'):
                 #     continue
                 
-                print(pcap)
                 if dev_name in dns_files:
                     dns_files[dev_name].append(pcap)
                 else:

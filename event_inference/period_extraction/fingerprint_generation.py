@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import re
 
 # Useful paths
@@ -22,11 +23,13 @@ for file in os.listdir(dirc):  #  /freq_new/
             
             print(device_name)
 
-            f = open(dirc+file) # './freq_new/'+
-            f2 = open(dirc2+file) 
+            f = open(os.path.join(dirc, file)) # './freq_new/'+
+            f2 = open(os.path.join(dirc2, file))
 
-            out_file = open(out_dir+file,'w+')
-            non_file = open(non_dir+file,'w+')
+            out_file_path = os.path.join(out_dir, file)
+            out_file = open(out_file_path, 'w+')
+            non_file_path(os.path.join(non_dir, file))
+            non_file = open(non_file_path, 'w+')
             non_nums = 0
             is_nums = 0
             total_number = 0
