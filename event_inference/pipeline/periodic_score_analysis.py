@@ -126,9 +126,7 @@ def plotting_cdf_list(score_list_list, name, file_list):
     plt.xlabel('', fontsize=15)
     plt.ylabel('', fontsize=15)
 
-    
-    if not os.path.isdir(cdf_dir):
-        os.mkdir(cdf_dir)
+    os.makedirs(cdf_dir, exist_ok=True)
     dic = os.path.join(cdf_dir, f"score_{name}_double.pdf")
     plt.savefig(dic)
     dic = os.path.join(cdf_dir, f"score_{name}_double.png")

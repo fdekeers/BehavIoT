@@ -11,6 +11,7 @@ venv
 
 # Output files
 event_inference/ip_host/
+event_inference/model/
 
 # Logs
 **/*.log

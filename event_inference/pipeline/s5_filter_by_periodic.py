@@ -1,6 +1,7 @@
 import warnings
 import utils
 import os
+from pathlib import Path
 import sys
 import argparse
 import pickle
@@ -15,6 +16,12 @@ import Constants as c
 
 
 warnings.simplefilter("ignore", category=DeprecationWarning)
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+data_dir = os.path.join(event_inference_dir, 'data')  # Output data directory
 
 num_pools = 12
 cols_feat = utils.get_features()
@@ -99,12 +106,10 @@ def main():
 
     print("Processing dataset: %s\nOutput files placed in: %s" % (dataset, root_model))
     root_output = os.path.join(root_model, 'output')
-    if not os.path.exists(root_output):
-        os.system('mkdir -pv %s' % root_output)
-        for model_alg in model_list:
-            model_dir = '%s/%s' % (root_model, model_alg)
-            if not os.path.exists(model_dir):
-                os.mkdir(model_dir)
+    os.makedirs(root_output, exist_ok=True)
+    for model_alg in model_list:
+        model_dir = os.path.join(root_model, model_alg)
+        os.makedirs(model_dir, exist_ok=True)
                 
     mac_dic = utils.read_mac_address()
     train_models()
@@ -115,15 +120,16 @@ def train_models():
     """
     Scan feature folder for each device
     """
-    print('root_model: %s' % root_model)
-    print('root_output: %s' % root_output)
+    print(f"root_model: {root_model}")
+    print(f"root_output: {root_output}")
     lfiles = []
     lparas = []
     ldnames = []
 
     random_state = 422
     print("random_state:", random_state)
-    for csv_file in os.listdir('data/%s-std/' % dataset):
+    dataset_dir = os.path.join(data_dir, f"{dataset}-std")
+    for csv_file in os.listdir(dataset_dir):
         if csv_file.endswith('.csv'):
             print(csv_file)
             dname = csv_file[:-4]
@@ -164,16 +170,17 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     """
     Prepare the directories and add only models that have not been trained yet 
     """
-    model_alg = 'filter'
-    model_dir = '%s/%s' % (root_model, model_alg)
-    model_file = '%s/%s%s.model' % (model_dir, dname, model_alg)
+    model_alg = "filter"
+    model_dir = os.path.join(root_model, model_alg)
+    model_file = os.path.join(model_dir, f"{model_dir}{dname}.model")
 
     """
     Get periods from fingerprinting files
     """
     periodic_tuple = []
     host_set = set()
-    with open('./period_detection/freq_period/2021_fingerprints/%s.txt' % dname, 'r') as file:
+    device_fingerprint_file_path = os.path.join(event_inference_dir, "period_extraction", "freq_period", "fingerprints", f"{dname}.txt")
+    with open(device_fingerprint_file_path, 'r') as file:
         for line in file:
             tmp = line.split()
             # print(tmp)
@@ -193,13 +200,12 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     """
     Load and preprocess testing data
     """
-
-    if not os.path.isfile("data/%s-std/%s.csv" % (dataset,dname)):
+    device_std_file_path = os.path.join(data_dir, f"{dataset}-std", f"{dname}.csv")
+    if not os.path.isfile(device_std_file_path):
         return 0
 
     print('loading test data %s' % dname)
-    test_data = pd.read_csv("data/%s-std/%s.csv" % (dataset,dname))
-    # test_data = pd.read_csv("data/test-std/%s.csv" % dname)
+    test_data = pd.read_csv(device_std_file_path)
     test_feature = test_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     test_data_numpy = np.array(test_data)
     test_feature = np.array(test_feature)
@@ -436,11 +442,9 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     test_feature['hosts'] = test_data_numpy[:,-1]
     # test_feature = pd.DataFrame(test_feature , columns=cols_feat) 
 
-    output_dir = 'data/%s-filtered-std/' % dataset
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
-    filtered_train_processed= '%s/%s.csv' % (output_dir , dname)
-    # filtered_train_processed= 'data/test-filtered-std/%s.csv' % ( dname)
+    output_dir = os.path.join(data_dir, f"{dataset}-filtered-std")
+    os.makedirs(output_dir, exist_ok=True)
+    filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
     test_feature.to_csv(filtered_train_processed, index=False)
 
     return 0

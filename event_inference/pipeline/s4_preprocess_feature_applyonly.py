@@ -149,11 +149,7 @@ def eval_individual_device(data_file, dname):
     # pca_train_file = '%s/%s.csv' % (train_pca_dir, dname)
 
 
-        
-    if not os.path.exists(train_std_dir):
-        os.system('mkdir -pv %s' % train_std_dir)
-    # if not os.path.exists(train_pca_dir):
-    #     os.mkdir(train_pca_dir)
+    os.makedirs(train_std_dir, exist_ok=True)
    
     train_data = pd.read_csv(data_file)
 

@@ -98,12 +98,10 @@ def main():
 
     print("Processing dataset: %s\nOutput files placed in: %s" % (dataset, root_model))
     root_output = os.path.join(root_model, 'output')
-    if not os.path.exists(root_output):
-        os.system('mkdir -pv %s' % root_output)
-        for model_alg in model_list:
-            model_dir = '%s/%s' % (root_model, model_alg)
-            if not os.path.exists(model_dir):
-                os.mkdir(model_dir)
+    os.makedirs(root_output, exist_ok=True)
+    for model_alg in model_list:
+        model_dir = os.path.join(root_model, model_alg)
+        os.makedirs(model_dir, exist_ok=True)
                 
     mac_dic = utils.read_mac_address()
     train_models()
@@ -438,10 +436,9 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     test_feature['protocol'] = test_data_numpy[:,-2]
     test_feature['hosts'] = test_data_numpy[:,-1]
 
-    output_dir = 'data/%s-filtered-std/' % dataset
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
-    filtered_train_processed= '%s/%s.csv' % (output_dir , dname)
+    output_dir = os.path.join(data_dir, f"{dataset}-filtered-std")
+    os.makedirs(output_dir, exist_ok=True)
+    filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
 
     test_feature.to_csv(filtered_train_processed, index=False)
 

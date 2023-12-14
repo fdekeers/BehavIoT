@@ -3,6 +3,8 @@ import utils
 import os
 from pathlib import Path
 import sys
+import re
+import ast
 import argparse
 import pickle
 import numpy as np
@@ -23,8 +25,9 @@ event_inference_dir = script_path.parents[1]          # This script's parent dir
 data_dir = os.path.join(event_inference_dir, "data")  # Data directory
 
 num_pools = 1
-
+non_numerical_features = ['device', 'state', 'event', 'start_time', "remote_ip", "remote_port", "trans_protocol", "raw_protocol", 'protocol', 'hosts']
 cols_feat = utils.get_features()
+#cols_feat = [feat for feat in utils.get_features() if feat not in non_numerical_features]
 
 
 model_list = []
@@ -158,6 +161,26 @@ def train_models():
     print('Time to train all models for %s devices using %s threads: %.2f' % (len(lparas),num_pools, (t1 - t0)))
 
 
+def drop_features(df: pd.DataFrame, features: list) -> pd.DataFrame:
+    """
+    Drop given features from a pandas DataFrame object.
+
+    :param df: input DataFrame
+    :param features: list of features to drop
+    :return: copy of the DataFrame, with the given features dropped
+    """
+    try:
+        result_df = df.drop(features, axis=1)
+    except KeyError as e:
+        message = e.args[0]
+        pattern = r"\[([^]]*)\]"
+        m = re.search(pattern, message)
+        if m:
+            l = ast.literal_eval(f"[{m.group(1)}]")
+            features_to_remove = [feat for feat in features if feat not in l]
+            result_df = df.drop(features_to_remove, axis=1)
+    return result_df.fillna(-1)
+
 
 def eid_wrapper(a):
     return eval_individual_device(a[0], a[1], a[2])
@@ -255,13 +278,13 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
 
     csv_test_file = os.path.join(data_dir, "idle-2021-test-std", f"{dname}.csv")
     test_data = pd.read_csv(csv_test_file)
+    cols_feat = test_data.columns.tolist()
     test_feature = test_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     test_data_numpy = np.array(test_data)
     test_feature = np.array(test_feature)
     test_protocols = test_data['protocol'].fillna('').values
     test_hosts = test_data['hosts'].fillna('').values
     test_protocols = utils.protocol_transform(test_protocols)
-
     
     for i in range(len(test_hosts)):
         if test_hosts[i] != '' and test_hosts[i] != None:
@@ -335,8 +358,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         """
 
         if not os.path.exists(model_dir):
-            os.system('mkdir -pv %s' % model_dir)
-        model_file = os.path.join(model_dir, dname + tmp_host + tmp_proto +".model")
+            os.makedirs(model_dir, exist_ok=True)
+        model_file = os.path.join(model_dir, f"{dname}{tmp_host}{tmp_proto}.model")
 
         """
         Two steps
@@ -474,23 +497,19 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     print('Activity left: ',len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event)
     from collections import Counter
     print(Counter(test_hosts))
-    with open(os.path.join(root_model,'results.txt'),'a+') as f:
+    with open(os.path.join(root_model, 'results.txt'),'a+') as f:
         f.write('%s' % dname)
         f.write('\nFlows left: %2f %d %d' % (len(test_feature)/len_test_before,len(test_feature), len_test_before))
         f.write('\nActivity left: %2f %d %d \n\n' % (len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event))
 
-    test_feature = pd.DataFrame(test_data_numpy, columns=cols_feat) # use this only when processing std data
+    test_feature = pd.DataFrame(test_data_numpy, columns=cols_feat)  # use this only when processing std data
     idle_filter_dir = os.path.join(data_dir, "idle-2021-test-filtered-std")
-    if not os.path.exists(idle_filter_dir):
-        os.mkdir(idle_filter_dir)
+    os.makedirs(idle_filter_dir, exist_ok=True)
     filtered_train_processed = os.path.join(idle_filter_dir, f"{dname}.csv")
     test_feature.to_csv(filtered_train_processed, index=False)
     return 0
 
 
-
 if __name__ == '__main__':
     main()
     num_pools = 1
-
-# 

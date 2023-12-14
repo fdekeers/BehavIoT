@@ -101,12 +101,10 @@ def main():
 
     print("Input files located in: %s\nOutput files placed in: %s" % (root_feature, root_model))
     root_output = os.path.join(root_model, 'output')
-    if not os.path.exists(root_output):
-        os.system('mkdir -pv %s' % root_output)
-        for model_alg in model_list:
-            model_dir = os.path.join(root_model, model_alg)
-            if not os.path.exists(model_dir):
-                os.mkdir(model_dir)
+    os.makedirs(root_output, exist_ok=True)
+    for model_alg in model_list:
+        model_dir = os.path.join(root_model, model_alg)
+        os.makedirs(model_dir, exist_ok=True)
 
     train_models()
 
@@ -463,9 +461,8 @@ def eval_individual_device(input_data_file, dname, random_state):
     test_feature['protocol'] = test_data_numpy_new[:,-2]
     test_feature['hosts'] = test_data_numpy_new[:,-1]
 
-    output_dir = '%s-unknown' % root_feature[:-1]
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
+    output_dir = f"{root_feature[:-1]}-unknown"
+    os.makedirs(output_dir, exist_ok=True)
     filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
     # filtered_train_processed = os.path.join(data_dir, "test-filtered-std", f"{dname}.csv")
     print('Unknown csv:', filtered_train_processed)
@@ -476,10 +473,12 @@ def eval_individual_device(input_data_file, dname, random_state):
 
     print('-----------------------logs-------------------------')
 
+    # TODO: update dataset path
     dataset = root_feature.split('/')[1].split('-')[0]
+    print(f"root feature: {root_feature}")
+    print(f"dataset: {dataset}")
     dataset_path = os.path.join(root_model, dataset)
-    if not os.path.exists(dataset_path):
-        os.mkdir(dataset_path)
+    os.makedirs(dataset_path, exist_ok=True)
     dataset_file = os.path.join(root_model, dataset, f"{dname}.txt")
     with open(dataset_file, 'w+') as off:
         for i in range(len(test_timestamp)):
@@ -488,8 +487,7 @@ def eval_individual_device(input_data_file, dname, random_state):
 
     output_log_file = os.path.join(logs_dir, f"log_unknown_{root_feature.split('/')[-2]}")
 
-    if not os.path.exists(output_log_file):
-        os.mkdir(output_log_file)
+    os.makedirs(output_log_file, exist_ok=True)
     test_file = os.path.join(output_log_file, f"test-{dname}.txt")
     with open(test_file, 'w+') as off:
         cur_time_window_id = 0

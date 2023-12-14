@@ -101,12 +101,10 @@ def main():
 
     print("Input files located in: %s\nOutput files placed in: %s" % (root_feature, root_model))
     root_output = os.path.join(root_model, 'output')
-    if not os.path.exists(root_output):
-        os.system('mkdir -pv %s' % root_output)
-        for model_alg in model_list:
-            model_dir = os.path.join(root_model, model_alg)
-            if not os.path.exists(model_dir):
-                os.mkdir(model_dir)
+    os.makedirs(root_output, exist_ok=True)
+    for model_alg in model_list:
+        model_dir = os.path.join(root_model, model_alg)
+        os.makedirs(model_dir, exist_ok=True)
 
     train_models()
 
@@ -355,8 +353,7 @@ def eval_individual_device(train_data_file, dname, random_state):
         # Model file: 
         # model_file = os.path.join(model_dir, dname, model_alg + positive_label + ".model")
         model_path = os.path.join(model_dir, dname)
-        if not os.path.exists(model_path):
-            os.mkdir(model_path)
+        os.makedirs(model_path, exist_ok=True)
         model_file = os.path.join(model_dir, dname, f"{model_alg}_{positive_label}.model")
         _acc_score = -1
         """
@@ -567,8 +564,7 @@ def eval_individual_device(train_data_file, dname, random_state):
     print('# event_dict length',len(event_dict.keys()))
     print('------------------------------------------------')
     logs_dir = os.path.join(root_model, "logs")
-    if not os.path.exists(logs_dir):
-        os.mkdir(logs_dir)
+    os.makedirs(logs_dir, exist_ok=True)
     test_file = os.path.join(logs_dir, f"{dname}-test.txt")
     with open(test_file, 'w+') as off:
     # test_file = os.path.join(logs_dir, "binary_model", f"testing-{dname}.txt")

@@ -99,12 +99,10 @@ def main():
 
     print("Input files located in: %s\nOutput files placed in: %s" % (root_feature, root_model))
     root_output = os.path.join(root_model, 'output')
-    if not os.path.exists(root_output):
-        os.system('mkdir -pv %s' % root_output)
-        for model_alg in model_list:
-            model_dir = os.path.join(root_model, model_alg)
-            if not os.path.exists(model_dir):
-                os.mkdir(model_dir)
+    os.makedirs(root_output, exist_ok=True)
+    for model_alg in model_list:
+        model_dir = os.path.join(root_model, model_alg)
+        os.makedirs(model_dir, exist_ok=True)
 
     train_models()
 
@@ -342,8 +340,7 @@ def eval_individual_device(input_data_file, dname, random_state):
 
 
     unctrl_dir = os.path.join(root_model, "unctrl")
-    if not os.path.exists(unctrl_dir):
-        os.mkdir(unctrl_dir)
+    os.makedirs(unctrl_dir, exist_ok=True)
     unctrl_file = os.path.join(unctrl_dir, f"{dname}.txt")
     with open(unctrl_file, 'w+') as off:
         for i in range(len(test_timestamp)):
@@ -353,8 +350,7 @@ def eval_individual_device(input_data_file, dname, random_state):
     
     output_log_dir = os.path.join(logs_dir, f"log_{root_feature.split('/')[-2]}")
 
-    if not os.path.exists(output_log_dir):
-        os.mkdir(output_log_dir)
+    os.makedirs(output_log_dir, exist_ok=True)
     output_log_file = os.path.join(output_log_dir, f"unctrl-{dname}.txt")
     with open(output_log_file, 'w+') as off:
         cur_time_window_id = 0

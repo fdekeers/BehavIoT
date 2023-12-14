@@ -22,7 +22,7 @@ SCRIPTS_DIR=$EVENT_INFERENCE_DIR/scripts
 #$SCRIPTS_DIR/3-period-extraction.sh
 
 ## 4. Preprocessing
-$SCRIPTS_DIR/4-preprocessing.sh
+#$SCRIPTS_DIR/4-preprocessing.sh
 
 ## 5. Periodic event inference and filtering
 $SCRIPTS_DIR/5-periodic-event-inference.sh

@@ -2,6 +2,8 @@ import warnings
 import os
 from pathlib import Path
 import sys
+import re
+import ast
 import argparse
 import pickle
 import numpy as np
@@ -22,7 +24,8 @@ event_inference_dir = script_path.parents[1]          # This script's parent dir
 data_dir = os.path.join(event_inference_dir, 'data')  # Output data directory
 
 num_pools = 12
-cols_feat = utils.get_features()
+non_numerical_features = ['device', 'state', 'event', 'start_time', "remote_ip", "remote_port", "trans_protocol", "raw_protocol", 'protocol', 'hosts']
+cols_feat = [feat for feat in utils.get_features() if feat not in non_numerical_features]
 
 model_list = []
 root_output = ''
@@ -139,6 +142,26 @@ def train_models():
     print('Time to train all models for %s devices using %s threads: %.2f' % (len(lparas),num_pools, (t1 - t0)))
 
 
+def drop_features(df: pd.DataFrame, features: list) -> pd.DataFrame:
+    """
+    Drop given features from a pandas DataFrame object.
+
+    :param df: input DataFrame
+    :param features: list of features to drop
+    :return: copy of the DataFrame, with the given features dropped
+    """
+    try:
+        result_df = df.drop(features, axis=1)
+    except KeyError as e:
+        message = e.args[0]
+        pattern = r"\[([^]]*)\]"
+        m = re.search(pattern, message)
+        if m:
+            l = ast.literal_eval(f"[{m.group(1)}]")
+            features_to_remove = [feat for feat in features if feat not in l]
+            result_df = df.drop(features_to_remove, axis=1)
+    return result_df.fillna(-1)
+
 
 def eid_wrapper(a):
     return eval_individual_device(a[0], a[1]) #, a[2])
@@ -184,17 +207,13 @@ def eval_individual_device(idle_data_file, dname):
     
     # idle dirctories
     train_idle_std_dir = os.path.join(data_dir, "idle-2021-train-std")
+    os.makedirs(train_idle_std_dir, exist_ok=True)
     train_idle_pca_dir = os.path.join(data_dir, "idle-2021-train-pca")
+    os.makedirs(train_idle_pca_dir, exist_ok=True)
     test_idle_std_dir = os.path.join(data_dir, "idle-2021-test-std")
+    os.makedirs(test_idle_std_dir, exist_ok=True)
     test_idle_pca_dir = os.path.join(data_dir, "idle-2021-test-pca")
-    if not os.path.exists(train_idle_std_dir):
-        os.mkdir(train_idle_std_dir)
-    # if not os.path.exists(train_idle_pca_dir):
-    #     os.mkdir(train_idle_pca_dir)
-    if not os.path.exists(test_idle_std_dir):
-        os.mkdir(test_idle_std_dir)
-    # if not os.path.exists(test_idle_pca_dir):
-    #     os.mkdir(test_idle_pca_dir)
+    os.makedirs(test_idle_pca_dir, exist_ok=True)
 
     # idle std&pca files
     train_idle_std_file = os.path.join(train_idle_std_dir, f"{dname}.csv") 
@@ -228,10 +247,11 @@ def eval_individual_device(idle_data_file, dname):
         else:
             test_data = pd.read_csv(test_file)
 
-    
-        X_feature = train_data.drop(['device', 'state', 'event' ,'start_time', "remote_ip", "remote_port" ,"trans_protocol", "raw_protocol", 'protocol', 'hosts'], axis=1).fillna(-1)
+        # Training data
+        X_feature = drop_features(train_data, non_numerical_features)
         train_length = len(X_feature)
-        test_data_feature = test_data.drop(['device', 'state', 'event','start_time', "remote_ip", "remote_port" ,"trans_protocol", "raw_protocol", 'protocol', 'hosts'], axis=1).fillna(-1)
+        # Testing data
+        test_data_feature = drop_features(test_data, non_numerical_features)
 
         
     # read idle files
@@ -252,8 +272,8 @@ def eval_individual_device(idle_data_file, dname):
     test_idle_data = idle_data.loc[(idle_data['start_time'] >= split_time)] 
 
 
-    train_idle_feature = train_idle_data.drop(['device', 'state', 'event','start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
-    test_idle_feature = test_idle_data.drop(['device', 'state', 'event','start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
+    train_idle_feature = train_idle_data.drop(non_numerical_features, axis=1).fillna(-1)
+    test_idle_feature = test_idle_data.drop(non_numerical_features, axis=1).fillna(-1)
 
     # unctrl_data = pd.read_csv(unctrl_file)
     
@@ -268,12 +288,12 @@ def eval_individual_device(idle_data_file, dname):
     
     
     if with_routines:
-        routines_feature = routines_data.drop(['device', 'state', 'event','start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
+        routines_feature = routines_data.drop(non_numerical_features, axis=1).fillna(-1)
 
     
     print('train test idle:', dname, len(train_idle_data), len(test_idle_data))
     if len(train_idle_data)==0 or len(test_idle_data)==0:
-        print('Not enough idle data points for:',dname,len(train_idle_data), len(test_idle_data))
+        print('Not enough idle data points for:', dname, len(train_idle_data), len(test_idle_data))
         return
     train_idle_len = len(train_idle_feature)
 
@@ -288,29 +308,26 @@ def eval_individual_device(idle_data_file, dname):
         print('No data')
         exit(1)
     
-
-    ss = StandardScaler()
-
     # ss
-    print("X_feature", X_feature)
-    
+    ss = StandardScaler()
     X_all_std = ss.fit_transform(X_feature)
     if not only_idle:
         test_data_std = ss.transform(test_data_feature)
     test_idle_std = ss.transform(test_idle_feature)
     
-
-
-
     if with_routines:
         routines_std = ss.transform(routines_feature)
-        # routines_pca = pca.transform(routines_std)
+        #routines_pca = pca.transform(routines_std)
 
     '''
     Save ss and pca
     '''
     models_path = os.path.join(event_inference_dir, "model", "SS_PCA")
-    saved_dictionary = dict({'ss':ss}) # ,'pca':pca
+    os.makedirs(models_path, exist_ok=True)
+    saved_dictionary = dict({
+        "ss": ss
+        #"pca": pca
+    })
     model_file_path = os.path.join(models_path, f"{dname}.pkl")
     pickle.dump(saved_dictionary, open(model_file_path, "wb"))
 
@@ -324,7 +341,7 @@ def eval_individual_device(idle_data_file, dname):
         # X_pca = X_all_pca[:train_length,:] 
         # X_idle_pca = X_all_pca[train_length:,:]  # .iloc
 
-        X_feature_std = pd.DataFrame(X_std, columns=cols_feat[:-6])
+        X_feature_std = pd.DataFrame(X_std, columns=cols_feat)
         X_feature_std['device'] = train_data.device
         X_feature_std['state'] = train_data.state
         X_feature_std['event'] = train_data.event
@@ -333,7 +350,7 @@ def eval_individual_device(idle_data_file, dname):
         X_feature_std['hosts'] = train_data.hosts
 
 
-        test_data_std = pd.DataFrame(test_data_std, columns=cols_feat[:-6])
+        test_data_std = pd.DataFrame(test_data_std, columns=cols_feat)
         test_data_std['device'] = test_data.device
         test_data_std['state'] = test_data.state
         test_data_std['event'] = test_data.event
@@ -348,7 +365,7 @@ def eval_individual_device(idle_data_file, dname):
 
 
 
-    X_idle_std = pd.DataFrame(X_idle_std, columns=cols_feat[:-6])
+    X_idle_std = pd.DataFrame(X_idle_std, columns=cols_feat)
     X_idle_std['device'] = np.array(train_idle_data.device)
     X_idle_std['state'] = np.array(train_idle_data.state)
     X_idle_std['event'] = np.array(train_idle_data.event)
@@ -358,7 +375,7 @@ def eval_individual_device(idle_data_file, dname):
 
     
 
-    test_idle_std = pd.DataFrame(test_idle_std, columns=cols_feat[:-6])
+    test_idle_std = pd.DataFrame(test_idle_std, columns=cols_feat)
     test_idle_std['device'] = np.array(test_idle_data.device)
     test_idle_std['state'] = np.array(test_idle_data.state)
     test_idle_std['event'] = np.array(test_idle_data.event)
@@ -369,7 +386,7 @@ def eval_individual_device(idle_data_file, dname):
     #     print('Length check, train idle: ', len(X_idle_std), len(train_idle_data))
     #     print('Length check, test idle: ', len(test_idle_std), len(test_idle_data))
     if with_routines:
-        routines_std = pd.DataFrame(routines_std, columns=cols_feat[:-6])
+        routines_std = pd.DataFrame(routines_std, columns=cols_feat)
         routines_std['device'] = routines_data.device
         routines_std['state'] = routines_data.state
         routines_std['event'] = routines_data.event

@@ -16,4 +16,5 @@ LOGS_DIR=$EVENT_INFERENCE_DIR/logs
 
 ## Preprocessing
 python3 $PIPELINE_DIR/s4_preprocess_feature_new.py -i $DATA_DIR/idle-2021-features/ -o $DATA_DIR/idle/ > $LOGS_DIR/4-preprocessing/1-preprocess-idle.log 2> $LOGS_DIR/4-preprocessing/1-preprocess-idle.error
-python3 $PIPELINE_DIR/s4_preprocess_feature_applyonly.py -i $DATA_DIR/uncontrolled-features/ -o $DATA_DIR/uncontrolled/ > $LOGS_DIR/4-preprocessing/2-preprocess-uncontrolled.log 2> $LOGS_DIR/4-preprocessing/2-preprocess-uncontrolled.error
+# Uncontrolled dataset
+#python3 $PIPELINE_DIR/s4_preprocess_feature_applyonly.py -i $DATA_DIR/uncontrolled-features/ -o $DATA_DIR/uncontrolled/ > $LOGS_DIR/4-preprocessing/2-preprocess-uncontrolled.log 2> $LOGS_DIR/4-preprocessing/2-preprocess-uncontrolled.error

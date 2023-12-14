@@ -13,6 +13,7 @@ INPUT_DIR=$EVENT_INFERENCE_DIR/inputs/2021
 DATA_DIR=$EVENT_INFERENCE_DIR/data
 LOGS_DIR=$EVENT_INFERENCE_DIR/logs
 
+
 ## Periodic traffic extraction
 PERIOD_EXTRACTION_DIR=$EVENT_INFERENCE_DIR/period_extraction
 python3 $PERIOD_EXTRACTION_DIR/periodicity_inference.py > $LOGS_DIR/3-period-extraction/1-periodicity-inference.log 2> $LOGS_DIR/3-period-extraction/1-periodicity-inference.error
