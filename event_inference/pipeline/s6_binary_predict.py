@@ -352,7 +352,12 @@ def eval_individual_device(input_data_file, dname, random_state):
             off.write("%s :%s\n" % (datetime.fromtimestamp(test_timestamp[i]
                 ).strftime("%m/%d/%Y, %H:%M:%S"), output_label_list[i]))
 
+    # TODO: updated output log dir
     output_log_dir = os.path.join(logs_dir, f"log_{root_feature.split('/')[-2]}")
+    print("TODO")
+    print(f"Root feature: {root_feature}")
+    print(f"Output log dir: {output_log_dir}")
+
     os.makedirs(output_log_dir, exist_ok=True)
     output_log_file = os.path.join(output_log_dir, f"unctrl-{dname}.txt")
     with open(output_log_file, 'w+') as off:
