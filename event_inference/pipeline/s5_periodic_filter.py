@@ -197,7 +197,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     """
     model_alg = 'filter'
     model_dir = os.path.join(root_model, model_alg)
-    model_file = os.path.join(model_dir, f"{dname}{model_alg}")
+    model_file_name = f"{dname}_{model_alg}"
+    model_file_path = os.path.join(model_dir, model_file_name)
 
     """
     Training file reading 
@@ -357,9 +358,9 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         ML algorithms
         """
 
-        if not os.path.exists(model_dir):
-            os.makedirs(model_dir, exist_ok=True)
-        model_file = os.path.join(model_dir, f"{dname}{tmp_host}{tmp_proto}.model")
+        os.makedirs(model_dir, exist_ok=True)
+        model_file_name = f"{dname}_{tmp_host}_{tmp_proto}.model"
+        model_file_path = os.path.join(model_dir, model_file_name)
 
         """
         Two steps
@@ -418,7 +419,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         if len(test_feature_part) == 0:
             print('test feature matched host/proto == 0') 
             model_dictionary = dict({'trained_model':model})
-            pickle.dump(model_dictionary, open(model_file, 'wb'))
+            pickle.dump(model_dictionary, open(model_file_path, 'wb'))
             model = 0
             continue
         print(test_feature_part.shape)
@@ -486,7 +487,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
             f.write(f"\nFlows left: {count_left} {test_feature_part.shape[0]} {count_left/test_feature_part.shape[0]:.2f}\n\n")
 
         model_dictionary = dict({'trained_model':model})
-        pickle.dump(model_dictionary, open(model_file, 'wb'))
+        pickle.dump(model_dictionary, open(model_file_path, 'wb'))
         model = 0
 
     

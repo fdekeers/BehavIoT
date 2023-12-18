@@ -103,9 +103,9 @@ def train_models():
     """
     Scan feature folder for each device
     """
-    print('root_feature: %s' % root_feature)
-    print('root_model: %s' % root_model)
-    print('root_output: %s' % root_output)
+    print(f'root_feature: {root_feature}')
+    print(f'root_model: {root_model}')
+    print(f'root_output: {root_output}')
 
     lparas = []
 
@@ -114,7 +114,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
-            train_data_file = '%s/%s' % (root_feature, csv_file)
+            train_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
 
             lparas.append((train_data_file, dname, random_state))
@@ -143,18 +143,17 @@ def eval_individual_device(data_file, dname):
     global root_feature, root_model, root_test, root_test_out
 
 
-    train_std_dir = '%s%s' % (root_model[:-1], '-std' )
+    train_std_dir = f"{root_model[:-1]}-std"
     std_train_file = os.path.join(train_std_dir, f"{dname}.csv")
-    # train_pca_dir = '%s%s' % (root_model[:-1], '-pca' )
-    # pca_train_file = '%s/%s.csv' % (train_pca_dir, dname)
-
+    #train_pca_dir = f"{root_model[:-1]}-pca"
+    #pca_train_file = os.path.join(train_pca_dir, f"{dname}.csv")
 
     os.makedirs(train_std_dir, exist_ok=True)
    
     train_data = pd.read_csv(data_file)
 
     # unctrl_data = pd.read_csv(unctrl_file)
-    train_data = train_data.loc[(train_data['start_time'] >= 1638680400)] # 
+    train_data = train_data.loc[(train_data['start_time'] >= 1638680400)]
     num_data_points = len(train_data)
     if num_data_points < 1:
         print('  Not enough data points for %s' % dname)
@@ -172,15 +171,20 @@ def eval_individual_device(data_file, dname):
     '''
     Load ss and pca
     '''
-    model_path = './model/SS_PCA'
-    # saved_dictionary = dict({'ss':ss,'pca':pca})
-    model_file = "%s/%s.pkl"%(model_path,dname)
+    models_path = os.path.join(event_inference_dir, "model", "SS_PCA")
+    os.makedirs(models_path, exist_ok=True)
+    """
+    saved_dictionary = dict({
+        "ss": ss
+        #"pca": pca
+    })
+    """
+    model_file_path = os.path.join(models_path, f"{dname}.pkl")
 
 
     try:
-        models = pickle.load(open(model_file, 'rb'))
+        models = pickle.load(open(model_file_path, 'rb'))
         ss = models['ss']
-
         test_data_std = ss.transform(X_feature)
 
     except:
@@ -189,7 +193,7 @@ def eval_individual_device(data_file, dname):
         test_data_std = ss.fit_transform(X_feature)
         # test_data_pca = pca.fit_transform(test_data_std)
         saved_dictionary = dict({'ss':ss})
-        pickle.dump(saved_dictionary, open("%s/%s.pkl"%(model_path,dname),"wb"))
+        pickle.dump(saved_dictionary, open(model_file_path, "wb"))
 
 
     test_data_std = pd.DataFrame(test_data_std, columns=cols_feat[:-6])
@@ -208,5 +212,3 @@ def eval_individual_device(data_file, dname):
 if __name__ == '__main__':
     main()
     num_pools = 12
-
-# 

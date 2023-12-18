@@ -172,7 +172,8 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     """
     model_alg = "filter"
     model_dir = os.path.join(root_model, model_alg)
-    model_file = os.path.join(model_dir, f"{model_dir}{dname}.model")
+    model_file_name = f"{model_dir}_{dname}.model"
+    model_file_path = os.path.join(model_dir, model_file_name)
 
     """
     Get periods from fingerprinting files
@@ -304,9 +305,9 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
 
         model_alg = 'filter'
         model_dir = os.path.join(root_model, model_alg)
-        if not os.path.exists(model_dir):
-            os.system('mkdir -pv %s' % model_dir)
-        model_file = os.path.join(model_dir, dname + tmp_host_model + tmp_proto +".model")
+        os.makedirs(model_dir, exist_ok=True)
+        model_file_name = f"{dname}_{tmp_host_model}_{tmp_proto}.model"
+        model_file_path = os.path.join(model_dir, model_file_name)
 
 
         print("predicting by trained_model")
@@ -342,7 +343,7 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
         Load trained models
         """
 
-        model = pickle.load(open(model_file, 'rb'))['trained_model']
+        model = pickle.load(open(model_file_path, 'rb'))['trained_model']
 
         y_new = dbscan_predict(model,test_feature_part)
 

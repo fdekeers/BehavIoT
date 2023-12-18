@@ -21,7 +21,7 @@ warnings.simplefilter("ignore", UserWarning)
 script_path = Path(os.path.abspath(__file__))         # This script's path
 script_dir = script_path.parents[0]                   # This script's directory
 event_inference_dir = script_path.parents[1]          # This script's parent directory
-data_dir = os.path.join(event_inference_dir, 'data')  # Output data directory
+data_dir = os.path.join(event_inference_dir, "data")  # Output data directory
 
 num_pools = 12
 non_numerical_features = ['device', 'state', 'event', 'start_time', "remote_ip", "remote_port", "trans_protocol", "raw_protocol", 'protocol', 'hosts']
@@ -63,9 +63,10 @@ def main():
     root_model = args.root_pre_train
     if root_model.endswith("/"):
         root_model = root_model[:-1]
+    print(f"Root model: {root_model}")
 
     errors = False
-    #check -i in features
+    # check -i in features
     if root_feature == "":
         errors = True
         print(c.NO_FEAT_DIR, file=sys.stderr)
@@ -80,7 +81,7 @@ def main():
             errors = True
             print(c.NO_PERM % ("features directory", root_feature, "execute"), file=sys.stderr)
 
-    #check -o out models
+    # check -o out models
     if root_model == "":
         errors = True
         print(c.NO_MOD_DIR, file=sys.stderr)
@@ -91,16 +92,16 @@ def main():
         if not os.access(root_model, os.X_OK):
             errors = True
             print(c.NO_PERM % ("model directory", root_model, "execute"), file=sys.stderr)
-
-
+    else:
+        os.makedirs(root_model, exist_ok=True)
 
     if errors:
         print_usage(1)
     #end error checking
 
-    print("Input files located in: %s\nOutput files placed in: %s" % (root_feature, root_model))
-    root_output = os.path.join(root_model, 'output')
-
+    print(f"Input files located in: {root_feature}\nOutput files placed in: {root_model}")
+    root_output = os.path.join(root_model, "output")
+    os.makedirs(root_output, exist_ok=True)
 
     train_models()
 
@@ -171,23 +172,29 @@ def eval_individual_device(idle_data_file, dname):
     global root_feature, root_model, root_test, root_test_out
 
     
-    # directories
-    root_feature_dir = Path(root_feature)
-    train_feature_dir = os.path.join(root_feature_dir.parents[0], "train-features") 
-    test_feature_dir = os.path.join(root_feature_dir.parents[0], "test-features") 
-    root_model_dir = Path(root_model)
-    test_std_dir = os.path.join(root_model_dir.parents[0], "test-std") 
-    test_pca_dir = os.path.join(root_model_dir.parents[0], "test-pca")
+    ## Directories
+    # Training
+    train_feature_dir = os.path.join(data_dir, "train-features")
+    os.makedirs(train_feature_dir, exist_ok=True)
+    train_std_dir = os.path.join(data_dir, "train-std")
+    os.makedirs(train_std_dir, exist_ok=True)
+    train_pca_dir = os.path.join(data_dir, "train-pca")
+    os.makedirs(train_pca_dir, exist_ok=True)
+    # Testing
+    test_feature_dir = os.path.join(data_dir, "test-features")
+    os.makedirs(test_feature_dir, exist_ok=True)
+    test_std_dir = os.path.join(data_dir, "test-std") 
+    os.makedirs(test_std_dir, exist_ok=True)
+    test_pca_dir = os.path.join(data_dir, "test-pca")
+    os.makedirs(test_pca_dir, exist_ok=True)
     # print('Test feature:',test_feature_dir)
 
-    # train data file, std&pca files
+    # train data file, std & pca files
     train_data_file = os.path.join(train_feature_dir, f"{dname}.csv")
-    train_std_dir = f"{root_model}-std"
     std_train_file = os.path.join(train_std_dir, f"{dname}.csv")
-    train_pca_dir = f"{root_model}-pca"
     pca_train_file = os.path.join(train_pca_dir, f"{dname}.csv")
 
-    # test data file, std&pca files
+    # test data file, std & pca files
     test_file = os.path.join(test_feature_dir, f"{dname}.csv")
     std_test_file = os.path.join(test_std_dir, f"{dname}.csv")
     pca_test_file = os.path.join(test_pca_dir, f"{dname}.csv")
@@ -200,10 +207,6 @@ def eval_individual_device(idle_data_file, dname):
         with_routines = True
         routines_data = pd.read_csv(routines_file)
 
-        
-    os.makedirs(train_std_dir, exist_ok=True)
-    os.makedirs(test_std_dir, exist_ok=True)
-
     
     # idle dirctories
     train_idle_std_dir = os.path.join(data_dir, "idle-2021-train-std")
@@ -215,7 +218,7 @@ def eval_individual_device(idle_data_file, dname):
     test_idle_pca_dir = os.path.join(data_dir, "idle-2021-test-pca")
     os.makedirs(test_idle_pca_dir, exist_ok=True)
 
-    # idle std&pca files
+    # idle std & pca files
     train_idle_std_file = os.path.join(train_idle_std_dir, f"{dname}.csv") 
     train_idle_pca_file = os.path.join(train_idle_pca_dir, f"{dname}.csv")
     test_idle_std_file = os.path.join(test_idle_std_dir, f"{dname}.csv")
@@ -452,5 +455,3 @@ def eval_individual_device(idle_data_file, dname):
 if __name__ == '__main__':
     main()
     num_pools = 12
-
-# 

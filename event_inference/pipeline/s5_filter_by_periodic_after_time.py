@@ -120,7 +120,7 @@ def train_models():
 
     random_state = 422
     print("random_state:", random_state)
-    for csv_file in os.listdir('data/%s-std/' % dataset):
+    dataset_dir = os.path.join(data_dir, f"{dataset}-std")
         if csv_file.endswith('.csv'):
             print(csv_file)
             dname = csv_file[:-4]
@@ -161,16 +161,18 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     """
     Prepare the directories and add only models that have not been trained yet 
     """
-    model_alg = 'filter'
-    model_dir = '%s/%s' % (root_model, model_alg)
-    model_file = '%s/%s%s.model' % (model_dir, dname, model_alg)
+    model_alg = "filter"
+    model_dir = os.path.join(root_model, model_alg)
+    model_file_name = f"{dname}_{model_alg}.model"
+    model_file = os.path.join(model_dir, model_file_name)
 
     """
     Get periods from fingerprinting files
     """
     periodic_tuple = []
     host_set = set()
-    with open('./period_detection/freq_period/2021_fingerprints/%s.txt' % dname, 'r') as file:
+    device_fingerprint_file_path = os.path.join(event_inference_dir, "period_extraction", "freq_period", "fingerprints", f"{dname}.txt")
+    with open(device_fingerprint_file_path, 'r') as file:
         for line in file:
             tmp = line.split()
             # print(tmp)
@@ -191,15 +193,16 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     """
     Load and preprocess testing data
     """
-
-    if not os.path.isfile("data/%s-std/%s.csv" % (dataset,dname)):
+    device_std_file_path = os.path.join(data_dir, f"{dataset}-std", f"{dname}.csv")
+    if not os.path.isfile(device_std_file_path):
         return 0
-    output_dir = 'data/%s-filtered-std/' % dataset
-    filtered_train_processed = '%s/%s.csv' % (output_dir, dname)
+    output_dir = os.path.join(data_dir, f"{dataset}-filtered-std")
+    filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
 
     
     print('loading test data %s' % dname)
-    test_data = pd.read_csv("data/%s-filtered-std-time/%s.csv" % (dataset,dname))
+    device_csv_file_path = os.path.join(data_dir, f"{dataset}-filtered-std-time", f"{dname}.csv")
+    test_data = pd.read_csv(device_csv_file_path)
     test_feature = test_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     test_data_numpy = np.array(test_data)
     test_feature = np.array(test_feature)
@@ -297,11 +300,11 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
         else:
             tmp_host_model = tmp_host
 
-        model_alg = 'filter'
+        model_alg = "filter"
         model_dir = os.path.join(root_model, model_alg)
-        if not os.path.exists(model_dir):
-            os.system('mkdir -pv %s' % model_dir)
-        model_file = os.path.join(model_dir, dname + tmp_host_model + tmp_proto +".model")
+        os.makedirs(model_dir, exist_ok=True)
+        model_file_name = f"{dname}_{tmp_host_model}_{tmp_proto}.model"
+        model_file_path = os.path.join(model_dir, model_file_name)
 
 
         print("predicting by trained_model")
@@ -336,7 +339,7 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
         Load trained models
         """
         try:
-            model = pickle.load(open(model_file, 'rb'))['trained_model']
+            model = pickle.load(open(model_file_path, 'rb'))['trained_model']
         except: 
             continue
 

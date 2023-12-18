@@ -92,15 +92,14 @@ def main():
     
     group_size = 50
     dict_dec = dict()
-    dircache = os.path.join(out_dir, 'caches')
-    if not os.path.exists(dircache):
-        os.system('mkdir -pv %s' % dircache)
+    dircache = os.path.join(out_dir, "caches")
+    os.makedirs(dircache, exist_ok=True)
     #Parse input file names
     #in_dir/dev_dir/act_dir/dec_file
     for dev_dir in os.listdir(in_dir):
         if dev_dir.startswith("."):
             continue
-        training_file = os.path.join(out_dir, dev_dir + '.csv') #Output file
+        training_file = os.path.join(out_dir, f"{dev_dir}.csv")  # Output file
         #Check if output file exists
         if os.path.exists(training_file):
             print('Features for %s prepared already in %s' % (dev_dir, training_file))
@@ -128,8 +127,8 @@ def main():
                         state = act_dir
                         device = dev_dir
                         event = act_dir
-                    feature_file = os.path.join(out_dir, 'caches', device + '_' + state
-                                + '_' + dec_file[:-4] + '.csv') #Output cache files
+                    print(f"dec_file: {dec_file}")
+                    feature_file = os.path.join(out_dir, "caches", f"{device}_{state}_{dec_file[:-4]}.csv") #Output cache files
                     #the file, along with some data about it
                     paras = (full_dec_file, feature_file, group_size, device, state, event)
                     #Dict contains devices that do not have an output file
@@ -158,8 +157,7 @@ def main():
                             state = act_dir
                             device = dev_dir
                             event = event_dir
-                        feature_file = os.path.join(out_dir, 'caches', device + '_' + state
-                                    + '_' + dec_file[:-4] + '.csv') #Output cache files
+                        feature_file = os.path.join(out_dir, "caches", f"{device}_{state}_{dec_file[:-4]}.csv") #Output cache files
                         #the file, along with some data about it
                         paras = (full_dec_file, feature_file, group_size, device, state, event)
                         #Dict contains devices that do not have an output file
@@ -171,7 +169,7 @@ def main():
     print("Feature files to be generated from the following devices:", devices)
 
     for device in dict_dec:
-        training_file = os.path.join(out_dir, device + '.csv')
+        training_file = os.path.join(out_dir, f"{device}.csv")
         list_paras = dict_dec[device]
 
         #create groups to run with processes

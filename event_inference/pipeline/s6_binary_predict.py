@@ -168,7 +168,7 @@ def eval_individual_device(input_data_file, dname, random_state):
         Prepare the directories and add only models that have not been trained yet 
         """
         model_dir = os.path.join(root_model, model_alg)
-        # model_file = os.path.join(model_dir, f"{dname}{model_alg}.model")
+        # model_file = os.path.join(model_dir, f"{dname}_{model_alg}.model")
         label_file = os.path.join(model_dir, f"{dname}.label.txt")
 
         list_models_todo.append(model_alg)
@@ -347,8 +347,11 @@ def eval_individual_device(input_data_file, dname, random_state):
             off.write("%s :%s\n" % (datetime.fromtimestamp(test_timestamp[i]
                 ).strftime("%m/%d/%Y, %H:%M:%S"), output_label_list[i]))
 
-    
+    # TODO: updated output log dir
     output_log_dir = os.path.join(logs_dir, f"log_{root_feature.split('/')[-2]}")
+    print("TODO")
+    print(f"Root feature: {root_feature}")
+    print(f"Output log dir: {output_log_dir}")
 
     os.makedirs(output_log_dir, exist_ok=True)
     output_log_file = os.path.join(output_log_dir, f"unctrl-{dname}.txt")

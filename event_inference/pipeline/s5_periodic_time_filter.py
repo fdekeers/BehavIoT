@@ -154,7 +154,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     warnings.simplefilter("ignore", category=FutureWarning)
 
 
-    model_alg = 'filter'
+    model_alg = "filter"
     """
     Prepare the directories and add only models that have not been trained yet 
     """

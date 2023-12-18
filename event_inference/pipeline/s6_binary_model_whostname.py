@@ -171,7 +171,7 @@ def eval_individual_device(train_data_file, dname, random_state):
         Prepare the directories and add only models that have not been trained yet 
         """
         model_dir = os.path.join(root_model, model_alg)
-        # model_file = os.path.join(model_dir, f"{dname}{model_alg}.model")
+        # model_file = os.path.join(model_dir, f"{dname}_{model_alg}.model")
         label_file = os.path.join(model_dir, f"{dname}.label.txt")
 
         list_models_todo.append(model_alg)
