@@ -1,6 +1,7 @@
 import warnings
 import utils
 import os
+from pathlib import Path
 import sys
 import argparse
 import pickle
@@ -14,10 +15,14 @@ import Constants as c
 
 warnings.simplefilter("ignore", category=DeprecationWarning)
 
+# Useful paths
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+data_dir = os.path.join(event_inference_dir, 'data')  # Output data directory
+
 num_pools = 12
-
 cols_feat = utils.get_features()
-
 
 model_list = []
 root_output = ''
@@ -121,6 +126,7 @@ def train_models():
     random_state = 422
     print("random_state:", random_state)
     dataset_dir = os.path.join(data_dir, f"{dataset}-std")
+    for csv_file in os.listdir(dataset_dir):
         if csv_file.endswith('.csv'):
             print(csv_file)
             dname = csv_file[:-4]
