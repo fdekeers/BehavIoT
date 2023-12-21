@@ -26,10 +26,10 @@ PFSM_DIR=$SELF_DIR/PFSM
 #$SCRIPTS_DIR/4-preprocessing.sh
 
 ## 5. Periodic event inference and filtering
-$SCRIPTS_DIR/5-periodic-event-inference.sh
+#$SCRIPTS_DIR/5-periodic-event-inference.sh
 
 ## 6. User event inference
-$SCRIPTS_DIR/6-user-event-inference.sh
+#$SCRIPTS_DIR/6-user-event-inference.sh
 
 ## 7. Periodic model score
 $SCRIPTS_DIR/7-score.sh

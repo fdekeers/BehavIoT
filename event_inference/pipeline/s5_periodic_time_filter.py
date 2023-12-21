@@ -402,7 +402,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         log_file = os.path.join(log_dir, f"{dname}.txt") 
         with open(log_file, 'a+') as fff:
             fff.write(f"{tmp_proto} {tmp_host}: ")
-            fff.write(f"\nFlows left : {count_left} / {test_feature_part.shape[0]} ,  {count_left/test_feature_part.shape[0]:.2f}\n\n")
+            fff.write(f"\nFlows left : {count_left} / {test_feature_part.shape[0]} ,  {count_left/test_feature_part.shape[0]:2f}\n\n")
 
         model = 0
         
