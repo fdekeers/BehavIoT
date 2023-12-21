@@ -178,9 +178,12 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         return
     print(dname, periodic_tuple)
     
-    dataset = train_data_file.split('/')[1].split('-')[0]
-    print('Dataset: ', dataset)
-    print('loading test data')
+    # TODO: update path
+    dataset = train_data_file.split('/')[-2].split('-')[0]
+    print("TODO")
+    print(f"train_data_file: {train_data_file}")
+    print(f"Dataset: {dataset}")
+    print("loading test data")
 
     test_data = pd.read_csv(train_data_file)  # idle-2021-test-std-2s
 
@@ -399,7 +402,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         log_file = os.path.join(log_dir, f"{dname}.txt") 
         with open(log_file, 'a+') as fff:
             fff.write(f"{tmp_proto} {tmp_host}: ")
-            fff.write(f"\nFlows left : {count_left} / {test_feature_part.shape[0]} ,  {count_left/test_feature_part.shape[0]:2f}\n\n")
+            fff.write(f"\nFlows left : {count_left} / {test_feature_part.shape[0]} ,  {count_left/test_feature_part.shape[0]:.2f}\n\n")
 
         model = 0
         
