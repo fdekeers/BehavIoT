@@ -246,8 +246,7 @@ def eval_individual_device(input_data_file, dname, random_state):
     print(dname, activity_fingerprint_dic, activity_fingerprint_merge_count)
 
     model_dir = os.path.join(root_model, model_alg)
-    if not os.path.exists(model_dir):
-        os.system('mkdir -pv %s' % model_dir)
+    os.makedirs(model_dir, exist_ok=True)
 
     """
     Predict

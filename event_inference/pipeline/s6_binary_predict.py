@@ -194,8 +194,8 @@ def eval_individual_device(input_data_file, dname, random_state):
     """
     # model files, label files, and output files
     model_dir = os.path.join(root_model, model_alg)
-    if not os.path.exists(model_dir):
-        os.system('mkdir -pv %s' % model_dir)
+    os.makedirs(model_dir, exist_ok=True)
+    
     """
     Predict
     """

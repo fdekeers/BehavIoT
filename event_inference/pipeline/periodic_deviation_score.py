@@ -98,8 +98,7 @@ def main():
 
     print("Input files located in: %s\nOutput files placed in: %s" % (root_feature, root_model))
 
-    if not os.path.exists(root_model):
-        os.system('mkdir -pv %s' % root_model)
+    os.makedirs(root_model, exist_ok=True)
     train_models()
 
 
@@ -240,18 +239,16 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     test_data_numpy = test_data_numpy[filter_dns]
 
     log_time_dir = os.path.join(root_model, 'time_logs')
-    if not os.path.exists(log_time_dir):
-        os.system('mkdir -pv %s' % log_time_dir)
+    os.makedirs(log_time_dir, exist_ok=True)
 
     log_dir = os.path.join(root_model, 'logs')
-    if not os.path.exists(log_dir):
-        os.system('mkdir -pv %s' % log_dir)
+    os.makedirs(log_dir, exist_ok=True)
 
-    with open(os.path.join(log_dir,'%s.txt' % dname),'w+') as fff:
+    with open(os.path.join(log_dir, f"{dname}.txt"),'w+') as fff:
         fff.write('===================\n' )
     ## For each tuple: 
    
-    f = open(os.path.join(log_time_dir,'%s.txt' % dname),'w+')
+    f = open(os.path.join(log_time_dir, f"{dname}.txt"),'w+')
 
    
     gone_tuple = {}

@@ -149,9 +149,7 @@ deviation_score_list_list = []
 for in_dir in file_list:
     root_log = os.path.join(in_dir, "time_logs")
     output_dir = os.path.join(in_dir, "alarms")
-
-    if not os.path.exists(output_dir):
-        os.system('mkdir -pv %s' % output_dir)
+    os.makedirs(output_dir, exist_ok=True)
 
     list1 = []
     date_alarm_dic = {}

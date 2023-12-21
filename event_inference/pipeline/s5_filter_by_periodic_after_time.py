@@ -101,7 +101,7 @@ def main():
         print_usage(1)
     #end error checking
 
-    print("Processing dataset: %s\nOutput files placed in: %s" % (dataset, root_model))
+    print(f"Processing dataset: {dataset}\nOutput files placed in: {root_model}")
     root_output = os.path.join(root_model, 'output')
     os.makedirs(root_output, exist_ok=True)
     for model_alg in model_list:
@@ -236,8 +236,8 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     y_labels_test = test_data['state'].fillna('').values
     num_of_state = len(set(y_labels_test))
 
-    log_dir = os.path.join(root_model, '%s_logs' % dataset)
-    os.system('mkdir -pv %s' % log_dir)
+    log_dir = os.path.join(root_model, f"{dataset}-logs")
+    os.makedirs(log_dir, exist_ok=True)
 
     host_protocol_dic = {}
     for i in range(len(test_feature)):

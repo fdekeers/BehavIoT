@@ -43,7 +43,7 @@ Usage: python3 {prog_name} exp_list out_dec_dir [num_proc]
 
 Decodes raw pcap data into human-readable text files.
 
-Example: python3 {prog_name} inputs/2021/trace-dataset.txt data/trace-decoded/ 4
+Example: python3 {prog_name} inputs/2021/routine-dataset.txt data/routine-decoded/ 4
 
 Arguments:
   exp_list:    a text file containing the file paths to pcap files to decode; pcap

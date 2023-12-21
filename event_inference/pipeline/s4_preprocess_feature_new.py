@@ -200,7 +200,7 @@ def eval_individual_device(idle_data_file, dname):
     pca_test_file = os.path.join(test_pca_dir, f"{dname}.csv")
 
     #idle_file = os.path.join(data_dir, "idle-2021-features", f"{dname}.csv")
-    routines_file = os.path.join(data_dir, "trace-features", f"{dname}.csv")
+    routines_file = os.path.join(data_dir, "routine-features", f"{dname}.csv")
     if not os.path.isfile(routines_file):
         with_routines = False
     else:

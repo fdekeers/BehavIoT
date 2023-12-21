@@ -434,8 +434,7 @@ def run(files, out_dir, ip_hosts, result_list, count_dic):
         # dir_target = os.path.join(out_dir, dev_name, activity)
         if dev_name not in count_dic:
             count_dic[dev_name] = {'prior':0,'after':0,'whois':0,'blank':0,'local':0} 
-        # if not os.path.isdir(dir_target):
-        #     os.system("mkdir -pv %s" % dir_target)
+        # os.makedirs(dir_target, exist_ok=True)
 
         # out_txt = os.path.join(dir_target, os.path.basename(f)[:-4] + "txt")
         #nothing happens if output file exists
@@ -528,8 +527,7 @@ def main():
     #end error checking
 
     print("Input file located in: %s\nOutput files placed in: %s\n" % (in_txt, out_dir))
-    if not os.path.exists(out_dir):
-        os.system("mkdir -pv %s" % out_dir)
+    os.makedirs(out_dir, exist_ok=True)
     
     # device_files = {}
     device_files = {}

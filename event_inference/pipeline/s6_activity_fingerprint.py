@@ -75,9 +75,7 @@ def main():
     print("Input files located in: %s \n Output files placed in: %s" % (root_feature, root_model))
     # root_output = os.path.join(root_model, 'fingerprint')
     root_output = root_model
-    if not os.path.exists(root_output):
-        os.system('mkdir -pv %s' % root_output)
-
+    os.makedirs(root_output, exist_ok=True)
 
     train_models()
 

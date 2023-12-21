@@ -191,9 +191,12 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         return
     print(dname, periodic_tuple)
     
-    dataset = train_data_file.split('/')[1].split('-')[0]
-    print('Dataset: ', dataset)
-    print('loading test data')
+    # TODO: update path
+    dataset = train_data_file.split('/')[-2].split('-')[0]
+    print("TODO")
+    print(f"train_data_file: {train_data_file}")
+    print(f"Dataset: {dataset}")
+    print("loading test data")
 
     test_data = pd.read_csv(train_data_file)  # idle-2021-test-std-2s
 
@@ -249,30 +252,31 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     res_left = 0
     res_filtered = 0
 
-    log_dir = os.path.join(root_model, '%s-logs' % dataset)
-    if not os.path.exists(log_dir):
-        os.system('mkdir -pv %s' % log_dir)
+    log_dir = os.path.join(root_model, f"{dataset}-logs")
+    os.makedirs(log_dir, exist_ok=True)
 
-    with open(os.path.join(log_dir,'%s.txt' % dname),'w+') as fff:
-        fff.write('===================\n' )
-    ## For each tuple: 
-    log_dir = os.path.join(root_model, 'time_logs')
-    if not os.path.exists(log_dir):
-        os.system('mkdir -pv %s' % log_dir)
-    f = open(os.path.join(log_dir,'%s.txt' % dname),'w+')
+    log_file = os.path.join(log_dir, f"{dname}.txt")
+    with open(log_file, 'w+') as fff:
+        fff.write("===================\n")
+    ## For each tuple:
+    time_logs_dir = os.path.join(root_model, "time_logs")
+    os.makedirs(time_logs_dir, exist_ok=True)
+
+    time_log_file = os.path.join(time_logs_dir, f"{dname}.txt")
+    f = open(time_log_file, 'w+')
     for tup in periodic_tuple:
         tmp_host = tup[0]
         tmp_proto = tup[1]
         cur_period = float(tup[2])
 
-        print('------%s------' %dname)
+        print('------%s------' % dname)
         print(tmp_proto, tmp_host)
         f.write('------%s %s %d------\n' % (tmp_host, tmp_proto, cur_period))
 
 
 
         print("predicting by trained_model")
-        print('Test len before:',len(test_feature))
+        print('Test len before:', len(test_feature))
         filter_test = []
         matched_suffix = False
         for i in range(len(test_feature)):
@@ -412,12 +416,11 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         """
         Save the model / logs
         """
-        log_dir = os.path.join(root_model, '%s-logs' % dataset)
-
-
-        with open(os.path.join(log_dir,'%s.txt' % dname),'a+') as fff:
-            fff.write('%s %s: ' % (tmp_proto, tmp_host))
-            fff.write('\nFlows left : %d / %d ,  %2f\n\n' % (count_left, test_feature_part.shape[0], count_left/test_feature_part.shape[0] ))
+        log_dir = os.path.join(root_model, f"{dataset}-logs")
+        log_file = os.path.join(log_dir, f"{dname}.txt") 
+        with open(log_file, 'a+') as fff:
+            fff.write(f"{tmp_proto} {tmp_host}: ")
+            fff.write(f"\nFlows left : {count_left} / {test_feature_part.shape[0]} ,  {count_left/test_feature_part.shape[0]:.2f}\n\n")
 
         model = 0
         
@@ -438,7 +441,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     """
     print('Flows left: ', len(test_feature)/len_test_before,len(test_feature), len_test_before)
     print('Activity left: ',len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event)
-    with open(os.path.join(root_model,'results.txt'),'a+') as f:
+    with open(os.path.join(root_model,'results.txt'), 'a+') as f:
         f.write('%s' % dname)
         f.write('\nFlows left: %2f %d %d' % (len(test_feature)/len_test_before,len(test_feature), len_test_before))
         f.write('\nActivity left: %2f %d %d \n\n' % (len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event))
@@ -452,8 +455,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     test_feature['hosts'] = test_data_numpy[:,-1]
 
     output_dir = os.path.join(data_dir, f"{dataset}-filtered-std-time")
-    if not os.path.exists(output_dir):
-        os.system('mkdir -pv %s' % output_dir)
+    os.makedirs(output_dir, exist_ok=True)
     filtered_train_processed = os.path.join(output_dir, dname)
 
     test_feature.to_csv(filtered_train_processed, index=False)
