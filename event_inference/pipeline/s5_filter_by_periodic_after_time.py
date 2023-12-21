@@ -206,7 +206,7 @@ def eval_individual_device(dataset, dname, random_state, specified_models=None):
     filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
 
     
-    print('loading test data %s' % dname)
+    print(f"loading test data {dname}")
     device_csv_file_path = os.path.join(data_dir, f"{dataset}-filtered-std-time", f"{dname}.csv")
     test_data = pd.read_csv(device_csv_file_path)
     test_feature = test_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)

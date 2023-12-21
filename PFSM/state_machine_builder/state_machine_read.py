@@ -15,8 +15,8 @@ import matplotlib.pyplot as plt
 import collections
 from collections import Counter
 import time
-matplotlib.use('Agg')
 
+matplotlib.use('Agg')
 
 state_machine_file = sys.argv[1] + '.dot'
 print(state_machine_file)
@@ -52,6 +52,7 @@ class Monitor(object):
 
     threshold = property(set_threshold, get_threshold)
     decay_factor = property(set_decay_factor, get_decay_factor)
+
 
 def plotting_cdf_list(score_list_list, name, file_list):
     plt.figure()

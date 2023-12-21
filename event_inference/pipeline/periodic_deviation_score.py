@@ -1,10 +1,7 @@
 import warnings
 import utils
 import os
-# Useful paths
-script_path = Path(os.path.abspath(__file__))                # This script's path
-script_dir = script_path.parents[0]                          # This script's directory
-event_inference_dir = script_path.parents[1]                 # This script's parent directory
+from pathlib import Path
 import sys
 import argparse
 import numpy as np
@@ -29,7 +26,6 @@ cols_feat = [ "meanBytes", "minBytes", "maxBytes", "medAbsDev",
             "meanBytes_in_external", "meanBytes_out_local", "meanBytes_in_local", "device", "state", "event", "start_time", "protocol", "hosts"]
 
 
-            
 model_list = []
 root_output = ''
 dir_tsne_plots = ''
@@ -185,7 +181,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
 
     print('loading test data')
 
-    test_data = pd.read_csv(train_data_file) # idle-2021-test-std-2s
+    test_data = pd.read_csv(train_data_file)  # idle-2021-test-std-2s
     test_data = test_data.sort_values('start_time')
     test_feature = test_data.drop(['device', 'state', 'event', 'start_time', 'protocol', 'hosts'], axis=1).fillna(-1)
     test_data_numpy = np.array(test_data)
@@ -252,6 +248,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
 
    
     gone_tuple = {}
+    res_left = 0
+    res_filtered = 0
     # for loop for each tup
     for tup in periodic_tuple:
         tmp_host = tup[0]
@@ -445,8 +443,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         log_dir = os.path.join(root_model, 'logs')
 
 
-        with open(os.path.join(log_dir,'%s.txt' % dname),'a+') as fff:
-            fff.write('%s %s: ' % (tmp_proto, tmp_host))
+        with open(os.path.join(log_dir, f"{dname}.txt"), 'a+') as fff:
+            fff.write(f"{tmp_proto} {tmp_host}: ")
             fff.write('\nFlows left (deviation): %d (%d | %d), (%d) %d %2f\n\n' % (count_left,count_large_deviation, count_small_deviation, count_big_but_not_enough, test_feature_part.shape[0], count_left/test_feature_part.shape[0] ))
 
     f.close()

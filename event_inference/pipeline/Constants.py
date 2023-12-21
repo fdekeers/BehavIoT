@@ -89,3 +89,9 @@ PREDICT_MOD_USAGE = """
 User event inference
 Usage: python3 {prog_name} -i IN_FEATURES_DIR -o OUT_MODELS_DIR 
 Example: see usage.md""".format(prog_name=PATH)
+
+# 
+EVAL_MOD_USAGE = """
+Periodic model score computation
+Usage: python3 {prog_name} -i IN_FEATURES_DIR -o OUT_MODELS_DIR 
+Example: see usage.md""".format(prog_name=PATH)

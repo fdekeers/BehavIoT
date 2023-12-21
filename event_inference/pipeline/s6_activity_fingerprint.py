@@ -72,7 +72,7 @@ def main():
 
     # end error checking
 
-    print("Input files located in: %s \n Output files placed in: %s" % (root_feature, root_model))
+    print(f"Input files located in: {root_feature} \n Output files placed in: {root_model}")
     # root_output = os.path.join(root_model, 'fingerprint')
     root_output = root_model
     os.makedirs(root_output, exist_ok=True)
@@ -270,12 +270,12 @@ def fingerprint_individual_device(train_data_file, dname, random_state):
             average = np.mean(t_delta_ave) if len(t_delta_ave) > 0 else -1
             
 
-            off.write('fingerprint- %s: %s\n'% (k, ';'.join(v)))
+            off.write("fingerprint- %s: %s\n" % (k, ';'.join(v)))
 
             try:
-                off.write('ts- %s:%.2f\n'% (k, average))
+                off.write(f"ts- {k}:{average:.2f}\n")
             except:
-                print(print(k, t_delta_ave))
+                print(k, t_delta_ave)
                 exit(1)
 
 

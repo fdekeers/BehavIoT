@@ -17,6 +17,8 @@ event_inference/model/
 **/*.log
 **/*.error
 event_inference/logs/decode_logs
+event_inference/logs/log_unknown_routines-filtered-std
 
 # Temp files
+test.sh
 test.py

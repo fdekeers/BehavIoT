@@ -310,16 +310,16 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         
         # periodic traffic that has muliple periods 
         double_period_dic = {'a1piwaqdydua5q.iot.us-east-1.amazonaws.com': [40, 19, 50], 
-        'avs-alexa-4-na.amazon.com':[30], 
-        'api.amazon.com':[88400], 
-        'spectrum.s3.amazonaws.com':[129], 
-        'a1nvlh0fc0asuq.iot.us-east-1.amazonaws.com': [1800],  # ikea-hub
-        'mqtt-us.meross.com': [121], # meross
-        'weather.nest.com': [2400], # nest-tstat
-        'dc-na04-useast2.connect.smartthings.com': [300], # smartthings-hub
-        'linksys.pool.ntp.org': [1200], # t-wemo-plug
-        'pool.ntp.org': [3600]
-         }
+            'avs-alexa-4-na.amazon.com':[30], 
+            'api.amazon.com':[88400], 
+            'spectrum.s3.amazonaws.com':[129], 
+            'a1nvlh0fc0asuq.iot.us-east-1.amazonaws.com': [1800],  # ikea-hub
+            'mqtt-us.meross.com': [121], # meross
+            'weather.nest.com': [2400], # nest-tstat
+            'dc-na04-useast2.connect.smartthings.com': [300], # smartthings-hub
+            'linksys.pool.ntp.org': [1200], # t-wemo-plug
+            'pool.ntp.org': [3600]
+        }
         ignore_list = []
         for i in range(len(test_timestamp_part)):
             if i ==0:
@@ -357,7 +357,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
             else:
                 anomaly_true = True
             if anomaly_true:
-                f.write('Diff: %.1f, %d \n' % (test_timestamp_part[i]-test_timestamp_part[i-1], test_timestamp_part[i]))
+                f.write(f"Diff: {test_timestamp_part[i]-test_timestamp_part[i-1]:.1f}, {test_timestamp_part[i]} \n")
                 y_new.append(-1)
         print('Current Period:', cur_period)
         
@@ -371,11 +371,11 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
 
         for i in range(len(y_new)):
 
-            if y_new[i] < 0:   # activity
+            if y_new[i] < 0:  # activity
                 count_left += 1
                 filter_list.append(True)
             else:
-                filter_list.append(False)   # periodic traffic
+                filter_list.append(False)  # periodic traffic
 
         if len(filter_list) != len(y_new):
             print('ER')
@@ -385,8 +385,8 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
             if filter_test[i] == False:
                 filter_test[i] = True
 
-            elif filter_test[i] == True: # true, (proto, host)
-                if filter_list[count_tmp] == False: # filter
+            elif filter_test[i] == True:  # true, (proto, host)
+                if filter_list[count_tmp] == False:  # filter
                     filter_test[i] = False
                 count_tmp += 1
             else:
@@ -420,7 +420,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         log_file = os.path.join(log_dir, f"{dname}.txt") 
         with open(log_file, 'a+') as fff:
             fff.write(f"{tmp_proto} {tmp_host}: ")
-            fff.write(f"\nFlows left : {count_left} / {test_feature_part.shape[0]} ,  {count_left/test_feature_part.shape[0]:.2f}\n\n")
+            fff.write(f"\nFlows left : {count_left} / {test_feature_part.shape[0]} ,  {count_left/test_feature_part.shape[0]:2f}\n\n")
 
         model = 0
         
@@ -440,11 +440,11 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
     Save 
     """
     print('Flows left: ', len(test_feature)/len_test_before,len(test_feature), len_test_before)
-    print('Activity left: ',len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event)
+    print('Activity left: ', len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event)
     with open(os.path.join(root_model,'results.txt'), 'a+') as f:
         f.write('%s' % dname)
-        f.write('\nFlows left: %2f %d %d' % (len(test_feature)/len_test_before,len(test_feature), len_test_before))
-        f.write('\nActivity left: %2f %d %d \n\n' % (len(set(test_data_numpy[:,-4]))/num_of_event, len(set(test_data_numpy[:,-4])), num_of_event))
+        f.write(f"\nFlows left: {len(test_feature)/len_test_before:2f} {len(test_feature)} {len_test_before}")
+        f.write(f"\nActivity left: {len(set(test_data_numpy[:,-4]))/num_of_event:2f} {len(set(test_data_numpy[:,-4]))} {num_of_event} \n\n")
     
     test_feature = pd.DataFrame(test_feature)
     test_feature['device'] = test_data_numpy[:,-6]
@@ -456,7 +456,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
 
     output_dir = os.path.join(data_dir, f"{dataset}-filtered-std-time")
     os.makedirs(output_dir, exist_ok=True)
-    filtered_train_processed = os.path.join(output_dir, dname)
+    filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
 
     test_feature.to_csv(filtered_train_processed, index=False)
 
