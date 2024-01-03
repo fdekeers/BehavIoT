@@ -179,9 +179,9 @@ for in_dir in file_list:
                         exit(1)
                     if tmp_host == '#' or tmp_host  == ' ':
                         tmp_host = ''
-                    if tmp_proto == 'SDDP' or tmp_proto == 'MDNS':
+                    if tmp_proto == 'SDDP' or tmp_proto == "SSDP" or tmp_proto == 'MDNS':
                         continue
-                    if tmp_host in mac_dic or tmp_host =='multicast' or ':' in tmp_host or '192' in tmp_host:
+                    if tmp_host in mac_dic or tmp_host == 'multicast' or ':' in tmp_host or '192' in tmp_host:
                         continue
                     periodic_tuple.append((tmp_host, tmp_proto, tmp_period))
                     tmp_host_set.add((tmp_host,tmp_proto))
