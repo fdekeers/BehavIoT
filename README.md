@@ -31,7 +31,7 @@ docker build [-t IMAGE_TAG] --build-arg UID=$(id -u) --build-arg GID=$(id -g) .
 
 Run a container instance with:
 ```bash
-docker run --rm --mount type=bind,source=$(pwd),target=/home/user/BehavIoT -it fdekeers/behaviot /bin/bash
+docker run --rm --mount type=bind,source=$(pwd),target=/home/user/BehavIoT -it fdekeers/behaviot /home/user/BehavIoT/create_user.sh $(id -u) $(id -g)
 ```
 (If you built the image by yourself, replace `fdekeers/behaviot` with the tag you gave to your image.)
 
