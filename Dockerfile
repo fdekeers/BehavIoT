@@ -3,6 +3,8 @@
 # Base image: Ubuntu 22.04 LTS
 FROM ubuntu:22.04
 
+# Set current user as root
+USER root
 WORKDIR /root
 
 # Install packages
@@ -16,7 +18,7 @@ ARG GROUP=docker
 ARG GID
 ARG HOME=/home/${USER}
 RUN groupadd --gid ${GID} ${GROUP} && \
-    useradd --uid ${UID} --gid ${GID} -m ${USER}
+    useradd --uid ${UID} --gid ${GID} --create-home ${USER}
 USER ${USER}
 WORKDIR ${HOME}
 
@@ -57,8 +59,9 @@ RUN git clone https://github.com/ModelInference/synoptic.git
 WORKDIR ${HOME}/synoptic
 RUN ant synoptic
 
-# Set working directory to home
-WORKDIR ${HOME}
+# Set current user as root
+USER root
+WORKDIR /root
 
 # Run scripts
 #CMD ./run_all.sh

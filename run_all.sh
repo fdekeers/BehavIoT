@@ -10,6 +10,10 @@ EVENT_INFERENCE_DIR=$SELF_DIR/event_inference
 SCRIPTS_DIR=$EVENT_INFERENCE_DIR/scripts
 PFSM_DIR=$SELF_DIR/PFSM
 
+### Initialization
+# Update user and group ID to have permission to create files
+
+
 
 ### Event inference
 
