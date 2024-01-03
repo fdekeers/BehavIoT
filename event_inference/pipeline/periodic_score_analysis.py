@@ -78,9 +78,9 @@ def plotting_cdf_list(score_list_list, name, file_list):
         y = np.array(list(requestOrdered.values()))/length_list   # num of traces
         
         y = np.cumsum(y)
-        plt.plot(x, y, 'r', label='%s' % cur_file.split('_')[-1], color=color_list[i]) # , 'o'
+        plt.plot(x, y, label='%s' % cur_file.split('_')[-1], color=color_list[i]) # , 'o'
     
-    plt.tight_layout(2.5)
+    plt.tight_layout()
     plt.subplots_adjust(left=0.16)
     plt.rcParams.update({'font.size': 15, 'xtick.labelsize': 10, 'ytick.labelsize': 10})
     # plt.rc('font', size=15)  
@@ -118,7 +118,7 @@ def plotting_cdf_list(score_list_list, name, file_list):
         y = np.array(list(requestOrdered.values()))/length_list   # num of traces
         
         y = np.cumsum(y)
-        plt.plot(x, y, 'r', label='%s' % cur_file.split('_')[-1], color=color_list[i]) # , 'o'
+        plt.plot(x, y, label='%s' % cur_file.split('_')[-1], color=color_list[i]) # , 'o'
     plt.rcParams.update({'font.size': 15, 'xtick.labelsize': 10, 'ytick.labelsize': 10})
     plt.ylim((0.99975,1.00001))
     plt.vlines(x=1.65, ymin=0.99975, ymax=1, color='k', linestyle='--')
