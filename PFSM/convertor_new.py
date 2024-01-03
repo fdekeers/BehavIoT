@@ -1,16 +1,28 @@
 import os
+from pathlib import Path
 from datetime import datetime
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+pfsm_dir = script_path.parents[1]              # This script's parent directory
+
+
 """
 Build the log files for Synoptic
 """
-base_dir = './traces'
-root_feature = '%s/log_uncontrolled' % base_dir
+base_dir = os.path.join(cdf_dir, "traces")
+root_feature = os.path.join(base_dir, "log_uncontrolled")
 list1 = []
 for csv_file in os.listdir(root_feature):
+    # TODO: update dname
     dname = '-'.join(csv_file.split('.')[0].split('-')[1:]) # csv_file[9:-4]
+    print(f"dname: {dname}")
     print(dname, csv_file)
+    exit()
 
-    f = open("%s/%s" % (root_feature, csv_file))
+    file_path = os.path.join(root_feature, csv_file)
+    f = open(file_path)
 
     for line in f:
         if len(line) <= 1 or line.startswith(' ') : # or line.startswith('1') 
@@ -28,14 +40,15 @@ for csv_file in os.listdir(root_feature):
             print(o1, label)
 
             list1.append(('%s-%s %s'  % (dname,label, str(o1)),o1))
+    
+    f.close()
 
 # print(list1)
 list1 = sorted(list1,key=lambda x: x[1])
 
-
 label = 0
 time = 0
-with open('%s/unctrl_feb' % base_dir, 'w') as off:
+with open(os.path.join(base_dir, "unctrl_feb"), 'w') as off:
     
     traceID = 0
     first_time = 0

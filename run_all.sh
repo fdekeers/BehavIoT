@@ -8,6 +8,7 @@ SELF_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  #
 # Useful directories
 EVENT_INFERENCE_DIR=$SELF_DIR/event_inference
 SCRIPTS_DIR=$EVENT_INFERENCE_DIR/scripts
+PFSM_DIR=$SELF_DIR/PFSM
 
 
 ### Event inference
@@ -31,11 +32,12 @@ SCRIPTS_DIR=$EVENT_INFERENCE_DIR/scripts
 #$SCRIPTS_DIR/6-user-event-inference.sh
 
 ## 7. Periodic model score
-$SCRIPTS_DIR/7-score.sh
+#$SCRIPTS_DIR/7-score.sh
 
 
 ### PFSM
-# TODO
+$PFSM_DIR/state_machine_builder/state_machine_build.sh
+
 
 ### Behavioral analysis
 # TODO

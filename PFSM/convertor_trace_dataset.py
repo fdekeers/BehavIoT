@@ -1,17 +1,28 @@
 import os
+from pathlib import Path
 from datetime import datetime
 import random
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+pfsm_dir = script_path.parents[1]              # This script's parent directory
+
+
 """
 Build the log files for Synoptic
 """
-base_dir = './traces'
-root_feature = '%s/log_routines' % base_dir
+base_dir = os.path.join(cdf_dir, "traces")
+root_feature = os.path.join(base_dir, "log_routines")
 list1 = []
 for csv_file in os.listdir(root_feature):
-
+    # TODO: update dname
     dname = '-'.join(csv_file.split('.')[0].split('-')[1:]) # csv_file[9:-4]
+    print(f"dname: {dname}")
     print(dname, csv_file)
-    f = open("%s/%s" % (root_feature, csv_file))
+
+    file_path = os.path.join(root_feature, csv_file)
+    f = open(file_path)
 
     for line in f:
         if len(line) <= 1 or line.startswith(' ') or line.startswith('0') :
@@ -30,6 +41,8 @@ for csv_file in os.listdir(root_feature):
                 # exit(1)
             print(o1, label)
             list1.append(('%s-%s %s'  % (dname,label, str(o1)),o1))
+    
+    f.close()
 
 # print(list1)
 list1 = sorted(list1,key=lambda x: x[1])
@@ -39,7 +52,7 @@ list1 = sorted(list1,key=lambda x: x[1])
 '''
 label = 0
 time = 0
-with open('%s/trace_log_may1' % base_dir, 'w') as off:
+with open(os.path.join(base_dir, trace_log_may1), 'w') as off:
     
     traceID = 0
     first_time = 0
@@ -74,7 +87,7 @@ with open('%s/trace_log_may1' % base_dir, 'w') as off:
 '''
 
 trace_list = []
-with open('%s/trace_may1' % base_dir, 'w') as off:
+with open(os.path.join(base_dir, "trace_may1"), 'w') as off:
     
     traceID = 0
     first_time = 0
@@ -160,11 +173,11 @@ for i in range(len(split_time)):
 
 print('Length list_split: ', len(list_split), len(list_split[0]))
 
-base_dir = './traces'
+base_dir = os.path.join(cdf_dir, "traces")
 # exit(1)
 for cur_fold in range(len(list_split)):
     test_fingerprint = []
-    with open('%s/trace_5fold_%s' % (base_dir, str(cur_fold)), 'w') as off:
+    with open(os.path.join(base_dir, f"trace_5fold_{str(cur_fold)}"), 'w') as off:
         traceID = 0
         first_time = 0
 
@@ -208,7 +221,7 @@ for cur_fold in range(len(list_split)):
             
 
     train_fingerprint = []
-    with open('%s/trace_5fold_train_%s' % (base_dir, str(cur_fold)), 'w') as off:
+    with open(os.path.join(base_dir, f"trace_5fold_train_{str(cur_fold)}"), 'w') as off:
         traceID = 0
         first_time = 0
 
@@ -261,7 +274,7 @@ for cur_fold in range(len(list_split)):
     print('Count previously unseen trace:', cur_fold, count_new_trace, count_all, count_new_trace/count_all, count_new_trace_transition)
 """
 dup_time = 50
-with open('%s/trace_train_dup_may30' % base_dir, 'w') as off:
+with open(os.path.join(base_dir, "trace_train_dup_may30"), 'w') as off:
     
     for i in range(dup_time):
 
@@ -297,7 +310,7 @@ with open('%s/trace_train_dup_may30' % base_dir, 'w') as off:
             # off.write('%s \n' % (','.join(['%.3f' %(new_time), (new_line_1+'-'+new_line_2)])))
 
 
-with open('%s/trace_train_log_dup_may30' % base_dir, 'w') as off:
+with open(os.path.join(base_dir, "trace_train_log_dup_may30"), 'w') as off:
     for i in range(dup_time):
         traceID = 0
         first_time = 0
@@ -330,7 +343,7 @@ with open('%s/trace_train_log_dup_may30' % base_dir, 'w') as off:
             off.write('%s, %s \n' % (label, new_time))
             # off.write('%s \n' % (','.join(['%.3f' %(new_time), (new_line_1+'-'+new_line_2)])))
 
-with open('%s/trace_test_dup_may30' % base_dir, 'w') as off:
+with open(os.path.join(base_dir, "trace_test_dup_may30"), 'w') as off:
     for i in range(dup_time):
         traceID = 0
         first_time = 0

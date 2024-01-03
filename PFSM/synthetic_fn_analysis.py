@@ -1,9 +1,18 @@
 import os
+from pathlib import Path
 import sys
 import math
 import numpy as np
 import random
 import copy
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+pfsm_dir = script_path.parents[1]              # This script's parent directory
+traces_dir = os.path.join(pfsm_dir, "traces")  # Traces directory
+
+
 """
 Add/Delete/Edit events on routine testing set. 
 """
@@ -16,13 +25,13 @@ runtime_transition_dic = {0: {2: [1.0, 1]}, 1: {1: [0.125, 1], 3: [0.125, 1], 9:
 add_num = 1
 edit_num = 2
 dup_trace = 5
-test_file = './traces/trace_test_may1'
-test_file = './traces/trace_5fold_0'
-# test_file = './traces/deviation_new_add4'
-# output_file = './traces/deviation_new_add%s' % str(add_num)
-# output_file = './traces/deviation_new_add5'
-# output_file = './traces/deviation_edit%s' % str(edit_num)
-output_file = './traces/deviation_dup%s' % str(dup_trace)
+test_file = os.path.join(traces_dir, "trace_test_may1")
+test_file = os.path.join(traces_dir, "trace_5fold_0")
+# test_file = os.path.join(traces_dir, "deviation_new_add4")
+# output_file = os.path.join(traces_dir, f"deviation_new_add{str(add_num)}")
+# output_file = os.path.join(traces_dir, "deviation_new_add5")
+# output_file = os.path.join(traces_dir, f"deviation_edit{str(edit_num)}")
+output_file = os.path.join(traces_dir, f"deviation_dup{str(dup_trace)}")
 
 of = open(output_file, 'w')
 with open(test_file, 'r') as f:
@@ -286,4 +295,6 @@ with open(test_file, 'r') as f:
     # for k, v in runtime_transition_dic[n].items()
     #     if v[0] <= min_prob:
     #         min_prob  = v[0]
-    #         min_trans = k 
+    #         min_trans = k
+
+of.close()

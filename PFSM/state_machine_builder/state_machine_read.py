@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sys
 import networkx as nx
 import pydot
@@ -16,9 +17,16 @@ import collections
 from collections import Counter
 import time
 
+# Useful paths
+script_path = Path(os.path.abspath(__file__))  # This script's path
+script_dir = script_path.parents[0]            # This script's directory
+pfsm_dir = script_path.parents[1]              # This script's parent directory
+cdf_dir = os.path.join(pfsm_dir, "cdf")        # CDF directory
+
+
 matplotlib.use('Agg')
 
-state_machine_file = sys.argv[1] + '.dot'
+state_machine_file = sys.argv[1]
 print(state_machine_file)
 train_file = sys.argv[2]
 print(train_file)
@@ -127,13 +135,13 @@ def plotting_cdf_list(score_list_list, name, file_list):
     #     plt.ylabel('transitions')
     # else:
     #     plt.ylabel('traces')
-    dic = './cdf/score_%s.pdf' % name
-    plt.savefig(dic)
-    dic = './cdf/score_%s.png' % name
-    plt.savefig(dic)
-
+    dic_pdf = os.path.join(cdf_dir, f"score_{name}.pdf")
+    plt.savefig(dic_pdf)
+    dic_png = os.path.join(cdf_dir, f"score_{name}.png")
+    plt.savefig(dic_png)
 
     return 0
+
 
 def plotting_cdf(score_list, name):
 
@@ -179,11 +187,10 @@ def plotting_cdf(score_list, name):
     # plt.vlines(x=0.68, ymin=0, ymax=1, color='k', linestyle='--')
     # plt.vlines(x=0.63, ymin=0, ymax=1, color='k', linestyle='--')
     # plt.legend()
-    dic = './cdf/score_%s.pdf' % name
-    plt.savefig(dic)
-    dic = './cdf/score_%s.png' % name
-    plt.savefig(dic)
-
+    dic_pdf = os.path.join(cdf_dir, f"score_{name}.pdf")
+    plt.savefig(dic_pdf)
+    dic_png = os.path.join(cdf_dir, f"score_{name}.png")
+    plt.savefig(dic_png)
 
     return 0
 
@@ -592,8 +599,13 @@ DG = nx.drawing.nx_pydot.from_pydot(graph)
 # print(DG.nodes.data())
 # print(DG.nodes['0'])
 for e in list(DG.nodes.data()):
-    # print(e)
-    node_num = int(e[0])
+    print(e)
+    try:
+        node_num = int(e[0])
+    except ValueError:
+        print("Error")
+        continue
+
     label = e[1]['label'].replace('\"','')
     # print(node_num, label)
     if label not in activity_node_dic:
@@ -844,7 +856,7 @@ start_time = time.time()
 """
 Testing
 """
-test_file = './traces/trace_5fold_1'
+test_file = os.path.join(pfsm_dir, "traces", "trace_5fold_1")
 
 
 with open(test_file, 'r') as f:
@@ -926,15 +938,15 @@ with open(test_file, 'r') as f:
 Testing multiple files 
 """
 
-
-# test_file = './traces/trace_test_may1'
-# test_file = './traces/trace_train_may1'
-test_file = './traces/deviation_FN_analysis_may1'
-test_file_list = ['./traces/trace_train_may1', './traces/trace_test_may1', './traces/deviation_add1','./traces/deviation_add2','./traces/deviation_add3', './traces/deviation_add4', './traces/deviation_add5']
-test_file_list = ['./traces/trace_5fold_training_combine', './traces/trace_5fold_testing_combine', './traces/deviation_new_add1','./traces/deviation_new_add2','./traces/deviation_new_add3', './traces/deviation_new_add4', './traces/deviation_new_add5']
-test_file_list = ['./traces/trace_5fold_training_combine', './traces/trace_5fold_testing_combine']
-test_file_list = ['./traces/trace_train_may1', './traces/trace_test_may1', './traces/deviation_dup1','./traces/deviation_dup2','./traces/deviation_dup3','./traces/deviation_dup4', './traces/deviation_dup5']
-test_file_list = ['./traces/trace_train_may1', './traces/trace_test_may1']
+#test_file_list = [os.path.join(pfsm_dir, "traces", "trace_may1")]
+#test_file_list = [os.path.join(pfsm_dir, "traces", "trace_test_may1")]
+#test_file_list = [os.path.join(pfsm_dir, "traces", "trace_train_may1")]
+#test_file_list = [os.path.join(pfsm_dir, "traces", "deviation_FN_analysis_may1")]
+#test_file_list = [os.path.join(pfsm_dir, "traces", "trace_train_may1"), os.path.join(pfsm_dir, "traces", "trace_test_may1"), os.path.join(pfsm_dir, "traces", "deviation_add1"), os.path.join(pfsm_dir, "traces", "deviation_add2"), os.path.join(pfsm_dir, "traces", "deviation_add3"), os.path.join(pfsm_dir, "traces", "deviation_add4"), os.path.join(pfsm_dir, "traces", "deviation_add5")]
+#test_file_list = [os.path.join(pfsm_dir, "traces", "trace_5fold_training_combine"), os.path.join(pfsm_dir, "traces", "trace_5fold_testing_combine")]
+#test_file_list = [os.path.join(pfsm_dir, "traces", "trace_train_may1"), os.path.join(pfsm_dir, "traces", "trace_test_may1"), os.path.join(pfsm_dir, "traces", "deviation_dup1"), os.path.join(pfsm_dir, "traces", "deviation_dup2"), os.path.join(pfsm_dir, "traces", "deviation_dup3"), os.path.join(pfsm_dir, "traces", "deviation_dup4"), os.path.join(pfsm_dir, "traces", "deviation_dup5")]
+#test_file_list = [os.path.join(pfsm_dir, "traces", "trace_train_may1"), os.path.join(pfsm_dir, "traces", "trace_test_may1")]
+test_file_list = [os.path.join(pfsm_dir, "traces", "trace_5fold_training_combine"), os.path.join(pfsm_dir, "traces", "trace_5fold_testing_combine"), os.path.join(pfsm_dir, "traces", "deviation_new_add1"), os.path.join(pfsm_dir, "traces", "deviation_new_add2"), os.path.join(pfsm_dir, "traces", "deviation_new_add3"), os.path.join(pfsm_dir, "traces", "deviation_new_add4"), os.path.join(pfsm_dir, "traces", "deviation_new_add5")]
 
 deviation_score_list_list = []
 transition_score_list_list = []
@@ -1049,12 +1061,13 @@ for test_file in test_file_list:
 print('Threshold:', get_threshold())
 
 exit(0)
+
 """
 Uncontrolled dataset
 """
 # Mode 1
-# test_file = './traces/unctrl_jan_apr28'
-test_file = './traces/unctrl_jan_may6'
+# test_file = os.path.join(pfsm_dir, "traces", "unctrl_jan_apr28")
+test_file = os.path.join(pfsm_dir, "traces", "unctrl_jan_may6")
 new_edge_indicator = 0
 print(transition_boundry_dic)
 deviation_score_list = []
@@ -1139,8 +1152,8 @@ with open(test_file, 'r') as f:
 
 print('Mode 2')
 # Mode 2
-# test_file = './traces/unctrl_feb_apr28'
-test_file = './traces/unctrl_feb_may6'
+# test_file = os.path.join(pfsm_dir, "traces", "unctrl_feb_apr28")
+test_file = os.path.join(pfsm_dir, "traces", "unctrl_feb_may6")
 print(transition_boundry_dic)
 with open(test_file, 'r') as f:
     alert_set = set()
