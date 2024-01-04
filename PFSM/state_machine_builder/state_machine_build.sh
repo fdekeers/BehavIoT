@@ -6,7 +6,7 @@ SELF_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  #
 # Useful directories
 your_root_path="/home/user"
 synoptic_dir="$your_root_path/synoptic"
-base_dir="$your_root_path/BehavIoT/BehavIoT/PFSM"
+base_dir="$SELF_DIR/.."
 input_dir="$base_dir/traces"
 output_dir="$base_dir/output"
 mkdir -p $output_dir
@@ -16,7 +16,7 @@ mkdir -p $logs_dir
 
 # 1. Build PFSM with Synoptic
 cd $synoptic_dir
-#bash ./synoptic.sh -o $output_dir/pfsm --dumpInvariants=True -r '(?<TYPE>.+),(?<DTIME>.+)$' -s '^------$' --outputCountLabels=True --outputProbLabels=True --outputSupportCount=True --ignoreNFbyInvs=True --supportCountThreshold=2 $input_dir/trace_may1 > $logs_dir/1-build-pfsm.log 2> $logs_dir/1-build-pfsm.error
+bash ./synoptic.sh -o $output_dir/pfsm --dumpInvariants=True -r '(?<TYPE>.+),(?<DTIME>.+)$' -s '^------$' --outputCountLabels=True --outputProbLabels=True --outputSupportCount=True --ignoreNFbyInvs=True --supportCountThreshold=2 $input_dir/trace_may1 > $logs_dir/1-build-pfsm.log 2> $logs_dir/1-build-pfsm.error
 
 # bash synoptic.sh -o output/nism_mar20 --dumpInitialPartitionGraph=True --dumpInvariants=True -r '(?<TYPE>.+),(?<DTIME>.+)$' -s '^------$' --outputCountLabels=True --outputProbLabels=True --outputSupportCount=True logs/trace
 # bash synoptic.sh -o output/nism_apr28 --dumpInitialPartitionGraph=True --dumpInvariants=True -r '(?<TYPE>.+),(?<DTIME>.+)$' -s '^------$' --outputCountLabels=True --outputProbLabels=True --outputSupportCount=True --ignoreNFbyInvs=True logs/trace

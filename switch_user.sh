@@ -6,6 +6,7 @@
 # VARIABLES
 NEW_USER="user"
 NEW_GROUP="user"
+USER_HOME="/home/user"
 
 # Print usage information
 usage() {
@@ -34,8 +35,11 @@ if ! id "$NEW_UID" &>/dev/null
 then
     # User does not already exist
     # Create new user with given UID
-    useradd --uid ${NEW_UID} --gid ${NEW_GID} --create-home ${NEW_USER}
+    useradd --uid ${NEW_UID} --gid ${NEW_GID} --create-home -s /bin/bash ${NEW_USER}
 fi
+
+# Update PATH for given user
+echo 'export PATH=/home/user/jdk1.7/bin:/home/user/ant1.9/bin:$PATH' >> $USER_HOME/.bashrc
 
 # Switch to new user
 su - ${NEW_USER}

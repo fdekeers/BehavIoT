@@ -1,0 +1,17 @@
+name: Run all experiments
+on: [push]
+
+
+jobs:
+
+  cross-compile:
+    runs-on: ubuntu-latest
+    container: fdekeers/behaviot
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run experiments
+        run: $GITHUB_WORKSPACE/.ci_scripts/run-all/run_all.sh

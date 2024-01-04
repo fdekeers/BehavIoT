@@ -18,7 +18,7 @@ ARG GROUP=docker
 ARG GID
 ARG HOME=/home/${USER}
 RUN groupadd --gid ${GID} ${GROUP} && \
-    useradd --uid ${UID} --gid ${GID} --create-home ${USER}
+    useradd --uid ${UID} --gid ${GID} --create-home -s /bin/bash ${USER}
 USER ${USER}
 WORKDIR ${HOME}
 
