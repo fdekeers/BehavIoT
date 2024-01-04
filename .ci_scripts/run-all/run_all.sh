@@ -2,13 +2,10 @@
 
 # Run all experiments for BehavIoT.
 
-# Constants
-NPROCS=$(nproc) # Number of processors
-SELF_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  # This script's path
 # Useful directories
-EVENT_INFERENCE_DIR=$SELF_DIR/event_inference
+EVENT_INFERENCE_DIR=$GITHUB_WORKSPACE/event_inference
 SCRIPTS_DIR=$EVENT_INFERENCE_DIR/scripts
-PFSM_DIR=$SELF_DIR/PFSM
+PFSM_DIR=$GITHUB_WORKSPACE/PFSM
 
 
 ### Event inference
