@@ -191,11 +191,7 @@ def eval_individual_device(train_data_file, dname, random_state, specified_model
         return
     print(dname, periodic_tuple)
     
-    # TODO: update path
     dataset = train_data_file.split('/')[-2].split('-')[0]
-    print("TODO")
-    print(f"train_data_file: {train_data_file}")
-    print(f"Dataset: {dataset}")
     print("loading test data")
 
     test_data = pd.read_csv(train_data_file)  # idle-2021-test-std-2s
