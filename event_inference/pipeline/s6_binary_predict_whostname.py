@@ -466,11 +466,7 @@ def eval_individual_device(input_data_file, dname, random_state):
 
     print('-----------------------logs-------------------------')
 
-    # TODO: update dataset path
-    dataset = root_feature.split('/')[1].split('-')[0]
-    print("TODO")
-    print(f"root feature: {root_feature}")
-    print(f"dataset: {dataset}")
+    dataset = root_feature.split('/')[-2].split('-')[0]
     dataset_path = os.path.join(root_model, dataset)
     os.makedirs(dataset_path, exist_ok=True)
     dataset_file = os.path.join(root_model, dataset, f"{dname}.txt")
