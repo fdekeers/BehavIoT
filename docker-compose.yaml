@@ -1,0 +1,9 @@
+services:
+  behaviot:
+    image: fdekeers/behaviot
+    container_name: behaviot
+    volumes:
+      - .:/BehavIoT
+    # Update to the desired command
+    command: ["/BehavIoT/event_inference/scripts/1-decoding.sh"]
+    restart: no

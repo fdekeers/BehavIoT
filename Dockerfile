@@ -45,7 +45,7 @@ RUN javac -version
 
 # Install Ant
 ARG ANT_HOME=${HOME}/ant1.9
-RUN wget https://dlcdn.apache.org//ant/binaries/apache-ant-1.9.16-bin.tar.gz
+RUN wget https://dlcdn.apache.org/ant/binaries/apache-ant-1.9.16-bin.tar.gz
 RUN tar -xzf apache-ant-1.9.16-bin.tar.gz && \
     rm apache-ant-1.9.16-bin.tar.gz
 RUN mv apache-ant-1.9.16 ${ANT_HOME}
