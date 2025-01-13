@@ -3,22 +3,18 @@
 # Base image: Ubuntu 22.04 LTS
 FROM ubuntu:22.04
 
-# Set current user as root
-USER root
-WORKDIR /root
+WORKDIR /
 
 # Install packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y tshark
-RUN apt-get update && apt-get install -y dnsutils wget git nano graphviz python3-pip
+RUN apt-get update && apt-get install -y wget git graphviz python3-pip
 
 # Create non-root user
 ARG USER=user
-ARG UID
-ARG GROUP=docker
-ARG GID
+ARG UID=1000
 ARG HOME=/home/${USER}
-RUN groupadd --gid ${GID} ${GROUP} && \
-    useradd --uid ${UID} --gid ${GID} --create-home -s /bin/bash ${USER}
+RUN groupadd --gid ${UID} ${USER} && \
+    useradd --uid ${UID} --gid ${UID} -m ${USER}
 USER ${USER}
 WORKDIR ${HOME}
 

@@ -2,6 +2,7 @@ import warnings
 import utils
 import os
 from pathlib import Path
+from pathlib import Path
 import sys
 import re
 import ast
@@ -14,6 +15,12 @@ from sklearn.cluster import DBSCAN
 import time
 import Constants as c
 warnings.simplefilter("ignore", category=DeprecationWarning)
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+data_dir = os.path.join(event_inference_dir, "data")  # Data directory
 
 # Useful paths
 script_path = Path(os.path.abspath(__file__))         # This script's path
@@ -130,6 +137,7 @@ def train_models():
     for csv_file in os.listdir(root_feature):
         if csv_file.endswith('.csv'):
             print(csv_file)
+            train_data_file = os.path.join(root_feature, csv_file)
             train_data_file = os.path.join(root_feature, csv_file)
             dname = csv_file[:-4]
 
