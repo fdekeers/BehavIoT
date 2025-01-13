@@ -13,7 +13,12 @@ import time
 from multiprocessing import Pool
 import Constants as c
 warnings.simplefilter("ignore", category=DeprecationWarning)
-warnings.simplefilter("ignore", category=FutureWarning)
+
+# Useful paths
+script_path = Path(os.path.abspath(__file__))         # This script's path
+script_dir = script_path.parents[0]                   # This script's directory
+event_inference_dir = script_path.parents[1]          # This script's parent directory
+data_dir = os.path.join(event_inference_dir, 'data')  # Output data directory
 
 # Useful paths
 script_path = Path(os.path.abspath(__file__))         # This script's path
@@ -23,6 +28,7 @@ data_dir = os.path.join(event_inference_dir, 'data')  # Output data directory
 
 num_pools = 12
 cols_feat = utils.get_features()
+
 model_list = []
 root_output = ''
 dataset = ''
