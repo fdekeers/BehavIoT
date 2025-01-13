@@ -59,9 +59,5 @@ RUN git clone https://github.com/ModelInference/synoptic.git
 WORKDIR ${HOME}/synoptic
 RUN ant synoptic
 
-# Set current user as root
-USER root
-WORKDIR /root
-
 # Run scripts
 #CMD ./run_all.sh
