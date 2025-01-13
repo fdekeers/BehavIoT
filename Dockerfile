@@ -37,7 +37,7 @@ RUN mv jdk1.7.0_80 ${JAVA_HOME}
 ENV JAVA_HOME=${JAVA_HOME}
 ENV PATH=${JAVA_HOME}/bin:${PATH}
 # Test Java installation
-RUN javac -version
+#RUN javac -version
 
 # Install Ant
 ARG ANT_HOME=${HOME}/ant1.9
@@ -48,12 +48,12 @@ RUN mv apache-ant-1.9.16 ${ANT_HOME}
 ENV ANT_HOME=${ANT_HOME}
 ENV PATH=${ANT_HOME}/bin:${PATH}
 # Test Ant installation
-RUN ant -version
+#RUN ant -version
 
 # Install Synoptic
-RUN git clone https://github.com/ModelInference/synoptic.git
-WORKDIR ${HOME}/synoptic
-RUN ant synoptic
+#RUN git clone https://github.com/ModelInference/synoptic.git
+#WORKDIR ${HOME}/synoptic
+#RUN ant synoptic
 
 # Run scripts
 #CMD ./run_all.sh
