@@ -1,9 +1,9 @@
 services:
   behaviot:
-    image: fdekeers/behaviot
+    image: behaviot
     container_name: behaviot
     volumes:
-      - .:/BehavIoT
+      - .:/home/user/BehavIoT
     # Update to the desired command
-    command: ["/BehavIoT/event_inference/scripts/1-decoding.sh"]
+    command: ["python3", "/home/user/BehavIoT/event_inference/pipeline/s6_binary_model_whostname.py", "-i", "/home/user/BehavIoT/event_inference/data/ours-features/", "-o", "/home/user/BehavIoT/event_inference/data/ours-binary-whostname/"]
     restart: no

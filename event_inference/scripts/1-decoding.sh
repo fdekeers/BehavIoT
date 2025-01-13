@@ -4,7 +4,7 @@
 # Decoding
 
 # Constants
-NPROCS=$(nproc) # Number of processors
+NPROCS=$(nproc)  # Number of processors
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )  # This script's path
 # Useful directories
 EVENT_INFERENCE_DIR=$SCRIPT_DIR/..

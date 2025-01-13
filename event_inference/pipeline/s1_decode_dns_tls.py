@@ -124,19 +124,22 @@ def main():
     out_dir = os.path.join(event_inference_dir, "ip_host")
     os.makedirs(out_dir, exist_ok=True)
     
-    if in_txt.endswith('routine_dns.txt'):
-        model_file = os.path.join(out_dir, "routines.model")
-    elif in_txt.endswith('activity_dns.txt'):
-        model_file = os.path.join(out_dir, "activity.model")
-    elif in_txt.endswith('idle_dns.txt'):
-        model_file = os.path.join(out_dir, "ip_host_idle.model")
-    elif in_txt.endswith('uncontrolled_dns.txt'):
-        model_file = os.path.join(out_dir, "uncontrolled_21-22.model")
-    else:
-        print('Please manually specify output model file')
-        exit(1)
-    
-    pickle.dump(ip_hosts_all, open(model_file, 'wb'))
+    ## Old, manual way to specify output model file
+    # if in_txt.endswith('routine_dns.txt'):
+    #     model_file = os.path.join(out_dir, "routines.model")
+    # elif in_txt.endswith('activity_dns.txt'):
+    #     model_file = os.path.join(out_dir, "activity.model")
+    # elif in_txt.endswith('idle_dns.txt'):
+    #     model_file = os.path.join(out_dir, "ip_host_idle.model")
+    # elif in_txt.endswith('uncontrolled_dns.txt'):
+    #     model_file = os.path.join(out_dir, "uncontrolled_21-22.model")
+    # else:
+    #     print('Please manually specify output model file')
+    #     exit(1)
+
+    model_file_basename = os.path.basename(in_txt).replace(".txt", ".model")
+    model_file_path = os.path.join(out_dir, model_file_basename)
+    pickle.dump(ip_hosts_all, open(model_file_path, 'wb'))
     # ip_hosts_all = pickle.load(open(model_file, 'rb'))
 
 
