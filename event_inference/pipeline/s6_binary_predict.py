@@ -32,8 +32,6 @@ root_model = ''
 mac_dic = {}
 
 
-short_window_device = ['tplink-plug', 't-wemo-plug', 'amazon-plug', 'tplink-bulb', 'smartlife-bulb',
-'bulb1', 'magichome-strip', 'gosund-bulb1', 'govee-led1', 'meross-dooropener', 'nest-tstat', 'switchbot-hub']
 long_window_device = ['wyze-cam','ikettle', 'echospot', 'dlink-camera', 'ring-camera', 'ring-doorbell']
 time_window_dic = {}
 
@@ -271,8 +269,6 @@ def eval_individual_device(input_data_file, dname, random_state):
     elif dname in long_window_device:
         time_window_length = 35
     else:
-        # print(dname)
-        # exit(1)
         time_window_length = 5
     
     for i in range(len(predict_labels_agg)):

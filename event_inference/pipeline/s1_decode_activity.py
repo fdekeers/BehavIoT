@@ -98,10 +98,12 @@ def extract_host_new(ip_src, ip_dst, ip_host, count_dic, cur_time, whois_list):
 def extract_pcap(in_pcap, out_txt, dev_name, ip_host):
 
     # missing DNS records
-    ip_host["8.8.8.8"] = "dns.google" # whois can't resolve this
+    ip_host["8.8.8.8"] = "dns.google" # whois can't resolve these
     ip_host["155.33.33.75"] = "neu.edu"
     ip_host["155.33.33.70"] = "neu.edu"
-
+    ip_host['54.149.5.31'] = "mq.gw.tuyaus.com"
+    ip_host['34.211.189.2'] = "m2.tuyaus.com"
+    ip_host['52.206.147.85'] = "a1piwaqdydua5q.iot.us-east-1.amazonaws.com"
 
 
     command = ["tshark", "-r", in_pcap, 

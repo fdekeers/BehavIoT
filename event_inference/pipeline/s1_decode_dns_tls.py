@@ -16,11 +16,11 @@ def print_usage(is_error):
     USAGE = """
     Usage: python3 {prog_name} inputs/2021/input_dns_file.txt
 
-    This file extracts ip-host tuple from dns and tls messages. 
+    This file extracts ip-host tuple from DNS and TLS messages. 
 
     Example: python3 {prog_name} inputs/2021/idle_dns.txt
 
-    For more information, see model_details.md.""".format(prog_name=PATH)
+    For more information, see usage.md.""".format(prog_name=PATH)
     
     print(USAGE, file=sys.stderr) if is_error else print(USAGE)
     exit(is_error)
@@ -104,8 +104,6 @@ def main():
 
                 dir_name = os.path.dirname(pcap)
                 dev_name = os.path.basename(os.path.dirname(dir_name))
-                # if dev_name != 'ring-doorbell':
-                #     continue
 
                 ## only accept merged file, not origial pcap file
                 # if os.path.basename(pcap).startswith('2021'):

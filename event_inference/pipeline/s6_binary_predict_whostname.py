@@ -33,8 +33,6 @@ root_model = ''
 mac_dic = {}
 
 
-short_window_device = ['tplink-plug', 't-wemo-plug', 'amazon-plug', 'tplink-bulb', 'smartlife-bulb',
-'bulb1', 'magichome-strip', 'gosund-bulb1', 'govee-led1', 'meross-dooropener', 'nest-tstat', 'switchbot-hub']
 long_window_device = ['wyze-cam','ikettle', 'echospot', 'dlink-camera', 'ring-camera', 'ring-doorbell']
 time_window_dic = {}
 
@@ -131,18 +129,8 @@ def train_models():
             lparas.append((input_data_file, dname, random_state))
     p = Pool(num_pools)
     t0 = time.time()
-    # list_results = p.map(eid_wrapper, lparas)
     for e in lparas:
         eid_wrapper(e)
-    # for ret in list_results:
-    #     if ret is None or len(ret) == 0: continue
-    #     for res in ret:
-    #         tmp_outfile = res[0]
-    #         tmp_res = res[1:]
-    #         with open(tmp_outfile, 'a+') as off:
-    #             # off.write('random_state:',random_state)
-    #             off.write('%s\n' % '\t'.join(map(str, tmp_res)))
-    #             print('Agg saved to %s' % tmp_outfile)
     t1 = time.time()
     print('Time to train all models for %s devices using %s threads: %.2f' % (len(lparas),num_pools, (t1 - t0)))
 
@@ -327,7 +315,6 @@ def eval_individual_device(input_data_file, dname, random_state):
     
     '''
     Step 2: combine results within a time window by majority voting and proba
-    TODO: time window
     Input: For each traffic flow, the list of predicted labels ordered by probability
     Output: label for each time window (aggregate labels from all flows within the window). 
     '''
@@ -350,8 +337,6 @@ def eval_individual_device(input_data_file, dname, random_state):
     elif dname in long_window_device:
         time_window_length = 35
     else:
-        # print(dname)
-        # exit(1)
         time_window_length = 5
     
     for i in range(len(predict_labels_agg)):
@@ -442,30 +427,31 @@ def eval_individual_device(input_data_file, dname, random_state):
     '''
     save unknown
     '''
-    filter_list = []
-    for i in range(len(time_window_id_list)):
-        time_window_id = time_window_id_list[i]
-        print(time_window_id, output_label_dic[time_window_id], test_timestamp[i])
-        if output_label_dic[time_window_id] == 'unknown':
-            filter_list.append(True)
-        else:
-            filter_list.append(False)
-    X_test = X_test[filter_list]
-    test_data_numpy_new = test_data_numpy[filter_list]
-    test_feature = pd.DataFrame(X_test)
-    test_feature['device'] = test_data_numpy_new[:,-6]
-    test_feature['state'] = test_data_numpy_new[:,-5]
-    test_feature['event'] = test_data_numpy_new[:,-4]
-    test_feature['start_time'] = test_data_numpy_new[:,-3]
-    test_feature['protocol'] = test_data_numpy_new[:,-2]
-    test_feature['hosts'] = test_data_numpy_new[:,-1]
+    # filter_list = []
+    # for i in range(len(time_window_id_list)):
+    #     time_window_id = time_window_id_list[i]
+    #     print(time_window_id, output_label_dic[time_window_id], test_timestamp[i])
+    #     if output_label_dic[time_window_id] == 'unknown':
+    #         filter_list.append(True)
+    #     else:
+    #         filter_list.append(False)
+    # X_test = X_test[filter_list]
+    # test_data_numpy_new = test_data_numpy[filter_list]
+    # test_feature = pd.DataFrame(X_test)
+    # test_feature['device'] = test_data_numpy_new[:,-6]
+    # test_feature['state'] = test_data_numpy_new[:,-5]
+    # test_feature['event'] = test_data_numpy_new[:,-4]
+    # test_feature['start_time'] = test_data_numpy_new[:,-3]
+    # test_feature['protocol'] = test_data_numpy_new[:,-2]
+    # test_feature['hosts'] = test_data_numpy_new[:,-1]
 
-    output_dir = f"{root_feature[:-1]}-unknown"
-    os.makedirs(output_dir, exist_ok=True)
-    filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
-    # filtered_train_processed = os.path.join(data_dir, "test-filtered-std", f"{dname}.csv")
-    print('Unknown csv:', filtered_train_processed)
-    test_feature.to_csv(filtered_train_processed, index=False)
+    #output_dir = f"{root_feature[:-1]}-unknown"
+    #os.makedirs(output_dir, exist_ok=True)
+    #filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
+    #filtered_train_processed = os.path.join(data_dir, "test-filtered-std", f"{dname}.csv")
+    #print('Unknown csv:', filtered_train_processed)
+    #test_feature.to_csv(filtered_train_processed, index=False)
+
     '''
     Logs
     '''
