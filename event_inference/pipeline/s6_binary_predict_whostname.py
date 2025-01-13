@@ -454,20 +454,22 @@ def eval_individual_device(input_data_file, dname, random_state):
     # test_feature['protocol'] = test_data_numpy_new[:,-2]
     # test_feature['hosts'] = test_data_numpy_new[:,-1]
 
-    #output_dir = f"{root_feature[:-1]}-unknown"
-    #os.makedirs(output_dir, exist_ok=True)
-    #filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
-    #filtered_train_processed = os.path.join(data_dir, "test-filtered-std", f"{dname}.csv")
-    #print('Unknown csv:', filtered_train_processed)
-    #test_feature.to_csv(filtered_train_processed, index=False)
-
+    output_dir = f"{root_feature[:-1]}-unknown"
+    os.makedirs(output_dir, exist_ok=True)
+    filtered_train_processed = os.path.join(output_dir, f"{dname}.csv")
+    # filtered_train_processed = os.path.join(data_dir, "test-filtered-std", f"{dname}.csv")
+    print('Unknown csv:', filtered_train_processed)
+    test_feature.to_csv(filtered_train_processed, index=False)
     '''
     Logs
     '''
 
     print('-----------------------logs-------------------------')
 
-    dataset = root_feature.split('/')[-2].split('-')[0]
+    # TODO: update dataset path
+    dataset = root_feature.split('/')[1].split('-')[0]
+    print(f"root feature: {root_feature}")
+    print(f"dataset: {dataset}")
     dataset_path = os.path.join(root_model, dataset)
     os.makedirs(dataset_path, exist_ok=True)
     dataset_file = os.path.join(root_model, dataset, f"{dname}.txt")
@@ -477,9 +479,6 @@ def eval_individual_device(input_data_file, dname, random_state):
                 ).strftime("%m/%d/%Y, %H:%M:%S"), output_label_list[i], test_host_protocol[i]))
 
     output_log_file = os.path.join(logs_dir, f"log_unknown_{root_feature.split('/')[-2]}")
-
-    output_log_file = os.path.join(logs_dir, f"log_unknown_{root_feature.split('/')[-2]}")
-
     os.makedirs(output_log_file, exist_ok=True)
     test_file = os.path.join(output_log_file, f"test-{dname}.txt")
     with open(test_file, 'w+') as off:
